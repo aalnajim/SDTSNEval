@@ -4,6 +4,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import TSNFlow
 import TSNHost
+import Path
 
 from TSNHost import TSNHost
 
@@ -44,16 +45,19 @@ def findAllPath(G,hostsList):
         for d in hostsList:
             paths = []
             if (s.id == d.id):
-                continue
+                continues
             if (s.accessPoint == d.accessPoint):
-                tempPath = [s.id, s.accessPoint, d.id]
+                tempNodes = [s.id, s.accessPoint, d.id]
+                tempDelay = s.transmissonDelay + s.processingDelay + G.nodes[s.accessPoint]['transmissionDelay'] + d.processingDelay
+                tempPath = Path(tempNodes,tempDelay)
                 paths.append(tempPath)
                 allPaths[s.id, d.id] = paths
                 continue
             else:
                 for path in nx.all_simple_paths(G, s.accessPoint, d.accessPoint):
                     if (len(path) < 8):
-                        tempPath = [s.id]
+                        tempNodes = [s.id]
+                        tempDelay = tempDelay + 1
                         for n in path:
                             tempPath.append(n)
                         tempPath.append(d.id)
@@ -109,32 +113,15 @@ def main():
 
 
     allPaths = findAllPath(G,hostsList)           #all the paths between all the hosts
-    # for s in hostsList:
-    #     for d in hostsList:
-    #         paths = []
-    #         if(s.id == d.id):
-    #             continue
-    #         if(s.accessPoint == d.accessPoint):
-    #             tempPath = [s.id,s.accessPoint,d.id]
-    #             paths.append(tempPath)
-    #             allPaths[s.id,d.id] = paths
-    #             continue
-    #         else:
-    #             for path in nx.all_simple_paths(G,s.accessPoint,d.accessPoint):
-    #                 if(len(path)<8):
-    #                     tempPath = [s.id]
-    #                     for n in path:
-    #                         tempPath.append(n)
-    #                     tempPath.append(d.id)
-    #                     paths.append(tempPath)
-    #                     allPaths[s.id,d.id]= paths
+    # print(allPaths.keys())
+    # print(len(allPaths[5,6]))
 
 
 
 
-    print(allPaths.keys())
-    print(len(allPaths[5,6]))
-
+    l1 = [1,2,3,4,5]
+    print(l1.__getitem__(4))
+    print(len(l1))
 
 
 
@@ -153,49 +140,7 @@ def main():
 
 main()
 
-# allPaths={} #all the paths between all the hosts
-# for S in hostsList:
-#     for D in hostsList:
-#         paths = []  # all the paths between two hosts
-#         if(S.id != D.id):
-#             if(S.accessPoint == D.accessPoint):
-#                 paths.append([S.id,S.accessPoint,D.id])
-#                 break
-#             for B in nx.neighbors(G, S.accessPoint):
-#                 if D.accessPoint == B:
-#                     paths.append([S.id,S.accessPoint,B,D.id])
-#                     break
-#                 for N in nx.neighbors(G, B):
-#                     if (N == S.accessPoint):
-#                         break
-#                     if D.accessPoint == N:
-#                         paths.append([S.id,S.accessPoint,B,N,D.id])
-#                         break
-#                     for U in nx.neighbors(G, N):
-#                         if (U == S.accessPoint) or (U == B):
-#                             break
-#                         if D.accessPoint == U:
-#                             paths.append([S.id,S.accessPoint,B,N,U,D.id])
-#                             break
-#                         for L in nx.neighbors(G, U):
-#                             if (L == S.accessPoint) or (L == B) or (L == N):
-#                                 break
-#                             if D.accessPoint == L:
-#                                 paths.append([S.id,S.accessPoint,B,N,U,L,D.id])
-#                                 break
-#                             for K in nx.neighbors(G, L):
-#                                 if (K == S.accessPoint) or (K == B) or (K == N) or (K == U):
-#                                     break
-#                                 if D.accessPoint == K:
-#                                     paths.append([S.id,S.accessPoint,B,N,U,L,K,D.id])
-#                                     break
-#                                 for R in nx.neighbors(G, K):
-#                                     if (R == S.accessPoint) or (R == B) or (R == N) or (R == U) or (R == L):
-#                                         break
-#                                     if D.accessPoint == R:
-#                                         paths.append([S.id,S.accessPoint,B,N,U,L,K,R,D.id])
-#             print(paths.__getitem__(0))
-#             allPaths[S.id,D.id] = paths
+
 
 
 

@@ -1,5 +1,5 @@
 import random
-
+import Path
 
 class TSNFlow():
     path = []
