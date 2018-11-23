@@ -78,6 +78,25 @@ def findAllPath(G,hostsList):
     return allPaths
 
 
+def findKthPath(G, hostsList,K):
+    allPaths = findAllPath(G,hostsList)   #all the paths between all the hosts
+    for s in hostsList:
+        for d in hostsList:
+            if (s.id == d.id):
+                continue
+            else:
+                if(s.id, d.id) in allPaths.keys():
+                    paths = allPaths[s.id, d.id]
+                    paths.sort(key= lambda x: x.delay)
+                    if(len(paths)>K):
+                        gap = len(paths) - K
+                        for i in range(gap):
+                            paths.pop()
+
+    return allPaths
+
+
+
 
 def main():
 
@@ -90,9 +109,10 @@ def main():
 
     # Setting the simulation parameters #
     ##########################################
-    n= 5
-    hosts = 3
+    n= 6
+    hosts = 4
     p= 0.5
+    k = 5
     ##########################################
 
 
@@ -123,9 +143,8 @@ def main():
     ##########################################
 
 
-    allPaths = findAllPath(G,hostsList)           #all the paths between all the hosts
-    # print(allPaths.keys())
-    # print(len(allPaths[5,6]))
+    firstKthPaths = findKthPath(G,hostsList,k) # The first kth paths between all the hosts (based on path delay)
+
 
 
 
