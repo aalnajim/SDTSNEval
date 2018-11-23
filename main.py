@@ -35,6 +35,10 @@ def rand(G,hosts, n):
 
     return transmissionDelays,linkMeasurments, hostsList
 
+def findHost(hostsList, id):
+    for h in hostsList:
+        if (h.id == id):
+            return h
 
 
 def findAllPath(G,hostsList):
@@ -45,11 +49,11 @@ def findAllPath(G,hostsList):
         for d in hostsList:
             paths = []
             if (s.id == d.id):
-                continues
+                continue
             if (s.accessPoint == d.accessPoint):
                 tempNodes = [s.id, s.accessPoint, d.id]
                 tempDelay = s.transmissonDelay + s.processingDelay + G.nodes[s.accessPoint]['transmissionDelay'] + d.processingDelay
-                tempPath = Path(tempNodes,tempDelay)
+                tempPath = Path.Path(tempNodes,tempDelay)
                 paths.append(tempPath)
                 allPaths[s.id, d.id] = paths
                 continue
@@ -57,10 +61,17 @@ def findAllPath(G,hostsList):
                 for path in nx.all_simple_paths(G, s.accessPoint, d.accessPoint):
                     if (len(path) < 8):
                         tempNodes = [s.id]
-                        tempDelay = tempDelay + 1
-                        for n in path:
-                            tempPath.append(n)
-                        tempPath.append(d.id)
+                        tempDelay = s.transmissonDelay + s.processingDelay
+                        i = 1
+                        for n in range(len(path)):
+                            tempNodes.append(list(path).__getitem__(n))
+                            tempDelay = tempDelay + G.nodes[list(path).__getitem__(n)]['transmissionDelay']
+                            if(i < len(path)):
+                                tempDelay = tempDelay + G[list(path).__getitem__(n)][list(path).__getitem__(n+1)]['processingDelay']
+                            i = i + 1
+                        tempNodes.append(d.id)
+                        tempDelay = tempDelay + d.processingDelay
+                        tempPath = Path.Path(tempNodes,tempDelay)
                         paths.append(tempPath)
                         allPaths[s.id, d.id] = paths
 
@@ -119,14 +130,43 @@ def main():
 
 
 
-    l1 = [1,2,3,4,5]
-    print(l1.__getitem__(4))
-    print(len(l1))
 
 
 
 
 
+
+
+
+
+
+    # dict = {}
+    # x = 4
+    # y = 8
+    # z = 5
+    # dict[x,y] = [1,2,3]
+    # if((x,y) in dict.keys()):
+    #     print(dict[x,y])
+
+
+    # for s in hostsList:
+    #     for d in hostsList:
+    #         if((s.id,d.id) in allPaths.keys()):
+    #             paths = allPaths[s.id, d.id]
+    #             for path in paths:
+    #                 print(path.nodes)
+    #                 print(path.delay)
+    #                 text = ''
+    #                 for i in range(len(path.nodes)):
+    #                     if(i ==0):
+    #                         text = text + str(list(path.nodes).__getitem__(i)) + 'transmission delay =' + str(findHost(hostsList,list(path.nodes).__getitem__(i)).transmissonDelay) + 'processing delay =' + str(findHost(hostsList,list(path.nodes).__getitem__(i)).processingDelay) + '\n'
+    #                     elif(i<len(path.nodes)-2):
+    #                         text = text + str(list(path.nodes).__getitem__(i)) + 'transmission delay =' + str(G.nodes[list(path.nodes).__getitem__(i)]['transmissionDelay']) + 'processing delay =' + str(G[list(path.nodes).__getitem__(i)][list(path.nodes).__getitem__(i+1)]['processingDelay']) + '\n'
+    #                     elif(i<len(path.nodes)-1):
+    #                         text = text + str(list(path.nodes).__getitem__(i)) + 'transmission delay =' + str(G.nodes[list(path.nodes).__getitem__(i)]['transmissionDelay']) + '\n'
+    #                     else:
+    #                         text = text + str(list(path.nodes).__getitem__(i)) + 'processing delay =' + str(findHost(hostsList,list(path.nodes).__getitem__(i)).processingDelay) + '\n'
+    #                 print(text)
 
 
     # for i in nx.edges(G, G.nodes):
