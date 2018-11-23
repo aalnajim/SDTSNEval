@@ -143,7 +143,11 @@ def main():
     ##########################################
 
 
+    # pre-routing phase #
+    ##########################################
     firstKthPaths = findKthPath(G,hostsList,k) # The first kth paths between all the hosts (based on path delay)
+    ##########################################
+
 
 
 
