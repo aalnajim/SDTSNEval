@@ -34,6 +34,36 @@ def rand(G,hosts, n):
 
     return transmissionDelays,linkMeasurments, hostsList
 
+
+
+def findAllPath(G,hostsList):
+
+    allPaths = {}  # all the paths between all the hosts
+
+    for s in hostsList:
+        for d in hostsList:
+            paths = []
+            if (s.id == d.id):
+                continue
+            if (s.accessPoint == d.accessPoint):
+                tempPath = [s.id, s.accessPoint, d.id]
+                paths.append(tempPath)
+                allPaths[s.id, d.id] = paths
+                continue
+            else:
+                for path in nx.all_simple_paths(G, s.accessPoint, d.accessPoint):
+                    if (len(path) < 8):
+                        tempPath = [s.id]
+                        for n in path:
+                            tempPath.append(n)
+                        tempPath.append(d.id)
+                        paths.append(tempPath)
+                        allPaths[s.id, d.id] = paths
+
+    return allPaths
+
+
+
 def main():
 
     # Reading the simulation parameters #
@@ -78,33 +108,32 @@ def main():
     ##########################################
 
 
-    allPaths = {} #all the paths between all the hosts
-    for s in hostsList:
-        for d in hostsList:
-            paths = []
-            if(s.id == d.id):
-                break
-            if(s.accessPoint == d.accessPoint):
-                tempPath = [s.id,s.accessPoint,d.id]
-                paths.append(tempPath)
-                allPaths[s.id,d.id] = paths
-                break
-            else:
-                for path in nx.all_simple_paths(G,s.accessPoint,d.accessPoint):
-                    if(len(path)<8):
-                        tempPath = [s.id]
-                        for n in path:
-                            tempPath.append(n)
-                        tempPath.append(d.id)
-                        paths.append(tempPath)
-                        allPaths[s.id,d.id]= paths
+    allPaths = findAllPath(G,hostsList)           #all the paths between all the hosts
+    # for s in hostsList:
+    #     for d in hostsList:
+    #         paths = []
+    #         if(s.id == d.id):
+    #             continue
+    #         if(s.accessPoint == d.accessPoint):
+    #             tempPath = [s.id,s.accessPoint,d.id]
+    #             paths.append(tempPath)
+    #             allPaths[s.id,d.id] = paths
+    #             continue
+    #         else:
+    #             for path in nx.all_simple_paths(G,s.accessPoint,d.accessPoint):
+    #                 if(len(path)<8):
+    #                     tempPath = [s.id]
+    #                     for n in path:
+    #                         tempPath.append(n)
+    #                     tempPath.append(d.id)
+    #                     paths.append(tempPath)
+    #                     allPaths[s.id,d.id]= paths
 
 
-    for h in hostsList:
-        print('(',h.id,',',h.accessPoint,')')
+
 
     print(allPaths.keys())
-    print(allPaths)
+    print(len(allPaths[5,6]))
 
 
 
