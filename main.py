@@ -6,6 +6,10 @@ import TSNFlow
 import TSNHost
 import Path
 import operation
+import TimeSlot
+import math
+from timeit import default_timer as timer
+
 
 from TSNHost import TSNHost
 
@@ -199,6 +203,15 @@ def computeTimeSlotLength(G, hostLists, firstKthPaths):
     return maxDelay
 
 
+def createTimeSlots(nbOfTimeSlots):
+    timeSlots = []
+    for index in range(nbOfTimeSlots):
+        tempTimeSlot = TimeSlot.TimeSlot(index,[])
+        timeSlots.append(tempTimeSlot)
+    return timeSlots
+
+
+
 def map(G,tempTSNFlow,startTime):
     operations=[]
     cmulativeTime = startTime
@@ -270,10 +283,43 @@ def SWOTS(G, tempTSNFlow,scheduledFlowsSWOTS,CLength):
 
     return False
 
-def SWTS():
+def SWTS(G, tempTSNFlow,scheduledFlowsSWTS ,CLength,timeSlots, now, FTT):
+    path = tempTSNFlow.path
+    isScheduled = False
+    publishTime = 15000 + 1000              #state-of-the-art SDN switches could insert forwaring entry in 15 ms (15000 microseconds), 1 ms for sending the configuration from the controller
+    slotLength = CLength/len(timeSlots)
+    nextSlot = (math.floor(((now-FTT+publishTime)%CLength)/slotLength)+1)%len(timeSlots)
+    counter = 1
+    pathEdges = []
+    for index in range(len(path.nodes)):
+        if (index == 0):
+            # tempLink = '({},{})'.format(path.nodes.__getitem__(index).id, path.nodes.__getitem__(index + 1))
+            # pathEdges.append(tempLink)
+            continue
+        elif(index <len(path.nodes)-2):
+            tempLink = '({},{})'.format(path.nodes.__getitem__(index), path.nodes.__getitem__(index + 1))
+            pathEdges.append(tempLink)
+        elif(index ==len(path.nodes)-2):
+            tempLink = '({},{})'.format(path.nodes.__getitem__(index), path.nodes.__getitem__(index + 1).id)
+            pathEdges.append(tempLink)
+    while True:
+        tempSlot = timeSlots.__getitem__(nextSlot)
+        isScheduled = True
+        for edge in pathEdges:
+            if(tempSlot.Scheduledlinks.__contains__(edge)):
+                isScheduled = False
+                break
+        if(isScheduled or counter>len(timeSlots)):
+            break
+        counter = counter + 1
+        nextSlot = (nextSlot + 1)%len(timeSlots)
+    if(isScheduled):
+        tempSlot = timeSlots.__getitem__(nextSlot)
+        for edge in pathEdges:
+            tempSlot.Scheduledlinks.append(edge)
+        scheduledFlowsSWTS.append((tempTSNFlow,nextSlot))
 
-
-    return False
+    return isScheduled
 
 
 def display(path):
@@ -304,6 +350,14 @@ def countGates():
 
 
 
+
+
+
+
+
+
+
+
 def main():
 
     # Reading the simulation parameters #
@@ -315,12 +369,13 @@ def main():
 
     # Setting the simulation parameters #
     ##########################################
-    n= 6    # number of nodes
-    hosts = 4   #number of hosts
-    nbOfTSNFlows = 10  # number of TSN flows
-    pFlow = 0.1    # the probability that a flow will arrive at each time unit
-    p= 0.5    # the probability of having an edge between any two nodes
-    k = 5   # the number of paths that will be chosen between each source and destination
+    n= 5                    #number of nodes
+    hosts = 4               #number of hosts
+    nbOfTSNFlows = 100       #number of TSN flows
+    pFlow = 0.1             #the probability that a flow will arrive at each time unit
+    p= 0.5                  #the probability of having an edge between any two nodes
+    k = 5                   #the number of paths that will be chosen between each source and destination
+    timeSlotsAmount = 20    #How many time slots in the schedule --> the length of the schedule
     TSNCountWeight = 1/3
     bandwidthWeight = 1/3
     hopCountWeight = 1/3
@@ -358,12 +413,10 @@ def main():
     ##########################################
 
     CLength = 0           #the schedule cycle length
-    timeSlotsAmount= 0    #how many time slots in each cycle
     timeSlotLength = 0    #the length of each time slot
 
     #Setting the values:
     timeSlotLength = computeTimeSlotLength(G,hostsList, firstKthPaths)
-    timeSlotsAmount = 10
     CLength = timeSlotsAmount * timeSlotLength
 
 
@@ -372,14 +425,18 @@ def main():
 
 
 
-    flowsList = []             #list of all created TSN flows
-    scheduledFlowsSWOTS = []   #list of all scheduled TSN flows using SWOTS
-    scheduledFlowsSWTS =[]     #list of all scheduled TSN flows using SWTS
-    counter = 0                #count the created TSN flows
-    scheduledCounterSWOTS = 0  #count the scheduled TSN flows (routed and scheduled) using SWOTS
-    scheduledCounterSWTS = 0   #count the scheduled TSN flows (routed and scheduled) using SWTS
-    routedCounter = 0          #count the routed TSN flows, but not scheduled
-    time = 0                   #Track the arrival time of TSN flows
+    timeSlots = createTimeSlots(timeSlotsAmount)    #the list of time slots
+    flowsList = []                                  #list of all created TSN flows
+    scheduledFlowsSWOTS = []                        #list of all scheduled TSN flows using SWOTS
+    scheduledFlowsSWTS =[]                          #list of all scheduled TSN flows using SWTS
+    counter = 0                                     #count the created TSN flows
+    scheduledCounterSWOTS = 0                       #count the scheduled TSN flows (routed and scheduled) using SWOTS
+    scheduledCounterSWTS = 0                        #count the scheduled TSN flows (routed and scheduled) using SWTS
+    routedCounter = 0                               #count the routed TSN flows, but not scheduled
+    time = 0                                        #Track the arrival time of TSN flows
+    routingExecutionTimes = []                      #a list of the execution times of the routing algorithm for all flows in microseconds [(1.3,True),(0.7,False)]
+    SWOTSSchedulingExectionTimes = []               #a list of the execution times of the SWOTS algorithm for all flows in microseconds [(1.3,True),(0.7,False)]
+    SWTSSchedulingExectionTimes = []                #a list of the execution times of the SWTS algorithm for all flows in microseconds [(1.3,True),(0.7,False)]
 
 
     while(True):
@@ -398,11 +455,15 @@ def main():
             tempTSNFlow = TSNFlow.TSNFlow(counter,s,d)
             flowsList.append((tempTSNFlow,time))
             counter = counter + 1
-
             # Path-Selection phase #
             ##########################################
+            start = timer()
             tempRouted, candidatePaths = pathSelection(G, tempTSNFlow, firstKthPaths, TSNCountWeight, bandwidthWeight, hopCountWeight)
+            end = timer()
+            routingExecutionTimes.append((((end - start) * 1000 * 1000),tempRouted))
             ##########################################
+
+
             if(tempRouted):
                 routedCounter = routedCounter + 1
                 # print('Flow ({}) from Source ({}) to destination ({}) with maximum delay = ({}) routed through {}'.format(tempTSNFlow.id,tempTSNFlow.source.id,tempTSNFlow.destniation.id,tempTSNFlow.flowMaxDelay,tempTSNFlow.path.nodes))
@@ -454,10 +515,40 @@ def main():
 
 
 
+            # Scheduling WithOut Time Slots (SWOTS) #
+            ##########################################
+            start = timer()
+            tempScheduledSWOTS = SWOTS(G, tempTSNFlow, scheduledFlowsSWOTS, CLength)
+            end = timer()
+            SWOTSSchedulingExectionTimes.append((((end - start) * 1000 * 1000), tempScheduledSWOTS))
+            ##########################################
 
-            tempScheduledSWOTS = SWOTS(G,tempTSNFlow,scheduledFlowsSWOTS,CLength)
             if(tempScheduledSWOTS):
                 scheduledCounterSWOTS = scheduledCounterSWOTS + 1
+
+
+            if(len(flowsList) == 0):
+                FTT = time
+            else:
+                FTT = flowsList.__getitem__(0).__getitem__(1)
+
+
+            # Scheduling With Time Slots (SWTS #
+            ##########################################
+            start = timer()
+            tempScheduledSWTS = SWTS(G, tempTSNFlow, scheduledFlowsSWTS, CLength, timeSlots, time, FTT)
+            end = timer()
+            SWTSSchedulingExectionTimes.append((((end - start) * 1000 * 1000), tempScheduledSWTS))
+            ##########################################
+
+            if(tempScheduledSWTS):
+                scheduledCounterSWTS = scheduledCounterSWTS + 1
+
+
+
+
+
+
 
 
             # i = 3
@@ -478,13 +569,27 @@ def main():
 
 
 
+    print(routingExecutionTimes)
+    print(SWOTSSchedulingExectionTimes)
+    print(SWTSSchedulingExectionTimes)
+
+
+
+    # print('Total = ({}) \nRouted = ({}) \nSWOTS = ({}) \nSWTS = ({})'.format(len(flowsList),routedCounter,scheduledCounterSWOTS,scheduledCounterSWTS))
+    # for time in timeSlots:
+    #     print(time.Scheduledlinks)
+
+
+
+
+
+
     # for scheduledItem in scheduledFlowsSWOTS:
     #     tempFlow = scheduledItem.__getitem__(0)
     #     tempStartTime = scheduledItem.__getitem__(1)
     #     tempPath = tempFlow.path
     #     displayPath = display(tempPath)
     #     print('Flow ({}) arrived at time ({}), routed through {}, scheduled at ({})'.format(tempFlow.id, findFlowArrivalTime(tempFlow,flowsList),displayPath, tempStartTime))
-
 
 
 
