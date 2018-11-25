@@ -345,8 +345,22 @@ def findFlowArrivalTime(flow, flowsList):
     return arrivalTime
 
 
-def countGates():
-    print('hello')
+def countGates(G, scheduledSWOTS):
+    numberOfGates = 0
+    numberOfMergedGates = 0
+    index = 0
+    for scheduledItem in scheduledSWOTS[0:len(scheduledSWOTS):]:
+        operations = map(G,scheduledItem.__getitem__(0),scheduledItem.__getitem__(1))
+        for operation in operations[2:len(operations):2]:
+            numberOfGates = numberOfGates + 1
+            for tempScheduledItem in scheduledSWOTS[index+1:len(scheduledSWOTS):]:
+                tempOperations = map(G,tempScheduledItem.__getitem__(0),tempScheduledItem.__getitem__(1))
+                index2 = 2
+                for tempOperation in tempOperations[2:len(tempOperations):2]:
+                    if((operation.id == tempOperation.id) and (operation.cumulativeDelay-tempOperations.__getitem__(index2-1).cumulativeDelay ==0)):
+                        numberOfMergedGates = numberOfMergedGates + 1
+
+                    index2 = index2 + 2
 
 
 
@@ -354,8 +368,14 @@ def countGates():
 
 
 
+        index = index + 1
 
 
+
+
+
+
+    return numberOfGates,numberOfMergedGates
 
 
 def main():
@@ -567,7 +587,11 @@ def main():
 
 
 
-
+    nbOfGates, nbOfmergedGates = countGates(G,scheduledFlowsSWOTS)
+    print(nbOfGates)
+    print(nbOfmergedGates)
+    reducePrecentage = (nbOfmergedGates/nbOfGates)*100
+    print('{}%'.format(reducePrecentage))
 
     print(routingExecutionTimes)
     print(SWOTSSchedulingExectionTimes)
