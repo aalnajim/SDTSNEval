@@ -11,3 +11,4 @@ class Path():
     def __init__(self,nodes,delay):
         self.nodes = nodes
         self.delay = delay
+        self.hopCount = len(nodes) -2

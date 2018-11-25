@@ -5,8 +5,11 @@ import matplotlib.pyplot as plt
 import TSNFlow
 import TSNHost
 import Path
+import operation
 
 from TSNHost import TSNHost
+
+
 
 
 def rand(G,hosts, n):
@@ -35,10 +38,10 @@ def rand(G,hosts, n):
 
     return transmissionDelays,linkMeasurments, hostsList
 
-def findHost(hostsList, id):
-    for h in hostsList:
-        if (h.id == id):
-            return h
+# def findHost(hostsList, id):
+#     for h in hostsList:
+#         if (h.id == id):
+#             return h
 
 
 def findAllPath(G,hostsList):
@@ -51,7 +54,7 @@ def findAllPath(G,hostsList):
             if (s.id == d.id):
                 continue
             if (s.accessPoint == d.accessPoint):
-                tempNodes = [s.id, s.accessPoint, d.id]
+                tempNodes = [s, s.accessPoint, d] ############################################################################
                 tempDelay = s.transmissonDelay + s.processingDelay + G.nodes[s.accessPoint]['transmissionDelay'] + d.processingDelay
                 tempPath = Path.Path(tempNodes,tempDelay)
                 paths.append(tempPath)
@@ -60,7 +63,7 @@ def findAllPath(G,hostsList):
             else:
                 for path in nx.all_simple_paths(G, s.accessPoint, d.accessPoint):
                     if (len(path) < 8):
-                        tempNodes = [s.id]
+                        tempNodes = [s] ############################################################################
                         tempDelay = s.transmissonDelay + s.processingDelay
                         i = 1
                         for n in range(len(path)):
@@ -69,7 +72,7 @@ def findAllPath(G,hostsList):
                             if(i < len(path)):
                                 tempDelay = tempDelay + G[list(path).__getitem__(n)][list(path).__getitem__(n+1)]['processingDelay']
                             i = i + 1
-                        tempNodes.append(d.id)
+                        tempNodes.append(d) ############################################################################
                         tempDelay = tempDelay + d.processingDelay
                         tempPath = Path.Path(tempNodes,tempDelay)
                         paths.append(tempPath)
@@ -97,6 +100,209 @@ def findKthPath(G, hostsList,K):
 
 
 
+def changeLinksBandwidth(G):
+
+    for i in nx.edges(G, G.nodes):
+        bandwidth = random.randint(500,1000)
+        G[i[0]][i[1]]['bandwidth']= bandwidth
+
+
+def findcandidatePaths(paths,delay):
+    candidatePaths = []
+    for path in paths:
+        if(path.delay<= delay):
+            candidatePaths.append(path)
+        else:
+            break
+
+    return candidatePaths
+
+def computeMeasurments(G, candidatePaths):
+    for path in candidatePaths:
+        TSNCounter = 0
+        bandwidth = 3000
+
+        for index in range(len(path.nodes)):
+            if(index == 0 or index > len(path.nodes)-3):
+                continue
+            if (G[path.nodes.__getitem__(index)][path.nodes.__getitem__(index + 1)]['nbOfTSN'] > TSNCounter):
+                TSNCounter = G[path.nodes.__getitem__(index)][path.nodes.__getitem__(index + 1)]['nbOfTSN']
+            if(G[path.nodes.__getitem__(index)][path.nodes.__getitem__(index+1)]['bandwidth']< bandwidth):
+                bandwidth = G[path.nodes.__getitem__(index)][path.nodes.__getitem__(index+1)]['bandwidth']
+        path.TSNFlowCounter = TSNCounter
+        path.bandwidth = bandwidth
+
+def BestValues(candidatePaths):
+    maxBandwidth = 0
+    minHopCount = 1000
+    minTSNCount = 10000
+    for path in candidatePaths:
+        if(path.bandwidth>maxBandwidth):
+            maxBandwidth = path.bandwidth
+        if(path.hopCount<minHopCount):
+            minHopCount = path.hopCount
+        if(path.TSNFlowCounter<minTSNCount):
+            minTSNCount = path.TSNFlowCounter
+
+    return maxBandwidth,minHopCount,minTSNCount
+
+
+def pathSelection(G, tempTSNFlow, firstKthPaths, TSNCountWeight, bandwidthWeight, hopCountWeight):
+    if((tempTSNFlow.source.id,tempTSNFlow.destniation.id) not in firstKthPaths.keys()):
+        return False
+    paths = firstKthPaths[tempTSNFlow.source.id,tempTSNFlow.destniation.id]
+    candidatePaths = findcandidatePaths(paths,tempTSNFlow.flowMaxDelay)
+
+    if len(candidatePaths)==0:
+        return False,candidatePaths
+    elif (len(candidatePaths)==1):
+        tempTSNFlow.path = candidatePaths.__getitem__(0)
+        tempTSNFlow.candidatePathCounter = 1
+        return True,candidatePaths
+    else:
+        tempTSNFlow.candidatePathCounter = len(candidatePaths)
+        computeMeasurments(G, candidatePaths)
+        maxBandwidth, minHopCount, minTSNCount = BestValues(candidatePaths)
+        maxDelta = 0
+        for path in candidatePaths:
+            hopCountRelativeValue = minHopCount/path.hopCount
+            bandwidthRelativeValue = path.bandwidth/maxBandwidth
+            if(path.TSNFlowCounter ==0):
+                TSNCounterRaltiveValue = 1
+            else:
+                TSNCounterRaltiveValue = minTSNCount/path.TSNFlowCounter
+
+
+            Delta = (hopCountWeight * hopCountRelativeValue) + (bandwidthWeight * bandwidthRelativeValue) + (TSNCountWeight * TSNCounterRaltiveValue)
+            if(Delta>maxDelta):
+                maxDelta = Delta
+                tempTSNFlow.path = path
+        return True,candidatePaths
+
+    return False,candidatePaths
+
+
+def computeTimeSlotLength(G, hostLists, firstKthPaths):
+    maxDelay = 0
+    for s in hostLists:
+        for d in hostLists:
+            if s.id == d.id:
+                continue
+            if((s.id,d.id)in firstKthPaths.keys()):
+                paths = firstKthPaths[s.id,d.id]
+                for path in paths:
+                    if(path.delay>maxDelay):
+                        maxDelay = path.delay
+
+
+
+    return maxDelay
+
+
+def map(G,tempTSNFlow,startTime):
+    operations=[]
+    cmulativeTime = startTime
+    path = tempTSNFlow.path
+    for i in range(len(tempTSNFlow.path.nodes)):
+        if (i == 0):
+            id = '{},{}trans'.format(tempTSNFlow.path.nodes.__getitem__(i).id,tempTSNFlow.path.nodes.__getitem__(i+1))
+            cmulativeTime = cmulativeTime + tempTSNFlow.path.nodes.__getitem__(i).transmissonDelay
+            tempOperation = operation.operation(id,cmulativeTime)
+            operations.append(tempOperation)
+            id = '{},{}proc'.format(tempTSNFlow.path.nodes.__getitem__(i).id,tempTSNFlow.path.nodes.__getitem__(i+1))
+            cmulativeTime = cmulativeTime + tempTSNFlow.path.nodes.__getitem__(i).processingDelay
+            tempOperation = operation.operation(id, cmulativeTime)
+            operations.append(tempOperation)
+        elif (i < len(path.nodes) - 2):
+            id = '{},{}trans'.format(tempTSNFlow.path.nodes.__getitem__(i), tempTSNFlow.path.nodes.__getitem__(i+1))
+            cmulativeTime = cmulativeTime + G.nodes[tempTSNFlow.path.nodes.__getitem__(i)]['transmissionDelay']
+            tempOperation = operation.operation(id,cmulativeTime)
+            operations.append(tempOperation)
+            id = '{},{}proc'.format(tempTSNFlow.path.nodes.__getitem__(i), tempTSNFlow.path.nodes.__getitem__(i+1))
+            cmulativeTime = cmulativeTime + G[tempTSNFlow.path.nodes.__getitem__(i)][tempTSNFlow.path.nodes.__getitem__(i+1)]['processingDelay']
+            tempOperation = operation.operation(id,cmulativeTime)
+            operations.append(tempOperation)
+        elif (i < len(path.nodes) - 1):
+            id = '{},{}trans'.format(tempTSNFlow.path.nodes.__getitem__(i), tempTSNFlow.path.nodes.__getitem__(i+1).id)
+            cmulativeTime = cmulativeTime + G.nodes[tempTSNFlow.path.nodes.__getitem__(i)]['transmissionDelay']
+            tempOperation = operation.operation(id,cmulativeTime)
+            operations.append(tempOperation)
+        else:
+            id = '{},{}proc'.format(tempTSNFlow.path.nodes.__getitem__(i-1),tempTSNFlow.path.nodes.__getitem__(i).id)
+            cmulativeTime = cmulativeTime + tempTSNFlow.path.nodes.__getitem__(i).processingDelay
+            tempOperation = operation.operation(id, cmulativeTime)
+            operations.append(tempOperation)
+
+    return operations
+
+
+
+
+def SWOTS(G, tempTSNFlow,scheduledFlowsSWOTS,CLength):
+    startTime = 0
+
+    if(len(scheduledFlowsSWOTS)!=0):
+        operations = map(G, tempTSNFlow,startTime)
+        index = 2
+        for operation in operations[2::2]:
+            for scheduledItem in scheduledFlowsSWOTS:
+                SF = scheduledItem.__getitem__(0)
+                SST = scheduledItem.__getitem__(1)
+                SFO = map(G,SF,SST)
+                for SO in SFO[2::2]:
+                    if(SO.id == operation.id):
+                        gap = SO.cumulativeDelay - operations.__getitem__(index-1).cumulativeDelay
+                        if (gap>startTime):
+                            startTime = gap
+                        break
+
+            index = index + 2
+        if((startTime + operations.__getitem__(len(operations)-2).cumulativeDelay)<=CLength):
+            scheduledFlowsSWOTS.append((tempTSNFlow,startTime))
+            return True
+
+
+
+    else:
+        scheduledFlowsSWOTS.append((tempTSNFlow,startTime))
+        return(True)
+
+
+    return False
+
+def SWTS():
+
+
+    return False
+
+
+def display(path):
+    text = '[ '
+    for n in range(len(path.nodes)):
+        if (n == 0):
+            text = text + '{}, '.format(path.nodes.__getitem__(n).id)
+        elif(n== len(path.nodes)-1):
+            text = text + '{} ] '.format(path.nodes.__getitem__(n).id)
+        else:
+            text = text + '{}, '.format(path.nodes.__getitem__(n))
+
+    return text
+
+def findFlowArrivalTime(flow, flowsList):
+    arrivalTime = -1
+    for index in range(len(flowsList)):
+        tempStoredItem = list(flowsList).__getitem__(index)
+        if(tempStoredItem.__getitem__(0).id == flow.id):
+            return tempStoredItem.__getitem__(1)
+
+
+    return arrivalTime
+
+
+def countGates():
+    print('hello')
+
+
 
 def main():
 
@@ -109,12 +315,16 @@ def main():
 
     # Setting the simulation parameters #
     ##########################################
-    n= 6
-    hosts = 4
-    p= 0.5
-    k = 5
+    n= 6    # number of nodes
+    hosts = 4   #number of hosts
+    nbOfTSNFlows = 10  # number of TSN flows
+    pFlow = 0.1    # the probability that a flow will arrive at each time unit
+    p= 0.5    # the probability of having an edge between any two nodes
+    k = 5   # the number of paths that will be chosen between each source and destination
+    TSNCountWeight = 1/3
+    bandwidthWeight = 1/3
+    hopCountWeight = 1/3
     ##########################################
-
 
     # Creating the graphs #
     ##########################################
@@ -123,7 +333,6 @@ def main():
         if(nx.degree(G,node)==0):
             G.remove_node(node)
     ##########################################
-
 
     # Draw the graph #
     ##########################################
@@ -142,11 +351,142 @@ def main():
     nx.set_edge_attributes(G,linkMeasurments)
     ##########################################
 
-
+    G = G.to_directed(False)
     # pre-routing phase #
     ##########################################
     firstKthPaths = findKthPath(G,hostsList,k) # The first kth paths between all the hosts (based on path delay)
     ##########################################
+
+    CLength = 0           #the schedule cycle length
+    timeSlotsAmount= 0    #how many time slots in each cycle
+    timeSlotLength = 0    #the length of each time slot
+
+    #Setting the values:
+    timeSlotLength = computeTimeSlotLength(G,hostsList, firstKthPaths)
+    timeSlotsAmount = 10
+    CLength = timeSlotsAmount * timeSlotLength
+
+
+
+
+
+
+
+    flowsList = []             #list of all created TSN flows
+    scheduledFlowsSWOTS = []   #list of all scheduled TSN flows using SWOTS
+    scheduledFlowsSWTS =[]     #list of all scheduled TSN flows using SWTS
+    counter = 0                #count the created TSN flows
+    scheduledCounterSWOTS = 0  #count the scheduled TSN flows (routed and scheduled) using SWOTS
+    scheduledCounterSWTS = 0   #count the scheduled TSN flows (routed and scheduled) using SWTS
+    routedCounter = 0          #count the routed TSN flows, but not scheduled
+    time = 0                   #Track the arrival time of TSN flows
+
+
+    while(True):
+        if counter >= nbOfTSNFlows:
+            break
+        changeLinksBandwidth(G)             #change the link bandwidth randomly, in future it will be based on the best effort streams
+        x = random.random()
+        if(x<=pFlow):
+
+
+            s=0
+            d=0
+            while s==d:
+                s = random.choice(hostsList)
+                d = random.choice(hostsList)
+            tempTSNFlow = TSNFlow.TSNFlow(counter,s,d)
+            flowsList.append((tempTSNFlow,time))
+            counter = counter + 1
+
+            # Path-Selection phase #
+            ##########################################
+            tempRouted, candidatePaths = pathSelection(G, tempTSNFlow, firstKthPaths, TSNCountWeight, bandwidthWeight, hopCountWeight)
+            ##########################################
+            if(tempRouted):
+                routedCounter = routedCounter + 1
+                # print('Flow ({}) from Source ({}) to destination ({}) with maximum delay = ({}) routed through {}'.format(tempTSNFlow.id,tempTSNFlow.source.id,tempTSNFlow.destniation.id,tempTSNFlow.flowMaxDelay,tempTSNFlow.path.nodes))
+                # if len(candidatePaths) == 0:
+                #     print('there is no candidate paths')
+                # elif (len(candidatePaths) == 1):
+                #     print('this is the only available path')
+                #     for index in range(len(tempTSNFlow.path.nodes)):
+                #         if (index == 0 or index > len(tempTSNFlow.path.nodes) - 3):
+                #             continue
+                #         G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)]['nbOfTSN'] = G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)]['nbOfTSN'] +1
+                #
+                # else:
+                #     tempTSNFlow.candidatePathCounter = len(candidatePaths)
+                #     computeMeasurments(G, candidatePaths)
+                #     maxBandwidth, minHopCount, minTSNCount = BestValues(candidatePaths)
+                #     maxDelta = 0
+                #     print('Here is the other paths values:')
+                #     i = 1
+                #     for path in candidatePaths:
+                #
+                #
+                #         hopCountRelativeValue = minHopCount / path.hopCount
+                #         bandwidthRelativeValue = path.bandwidth / maxBandwidth
+                #         if (path.TSNFlowCounter == 0):
+                #             TSNCounterRaltiveValue = 1
+                #         else:
+                #             TSNCounterRaltiveValue = minTSNCount / path.TSNFlowCounter
+                #
+                #         Delta = (hopCountWeight * hopCountRelativeValue) + (
+                #                         bandwidthWeight * bandwidthRelativeValue) + (
+                #                                 TSNCountWeight * TSNCounterRaltiveValue)
+                #         print('path ({}) is {} has delay = ({}), bandwidth = ({}),hop counts = ({}), and TSN count = ({}). The resulted Delta = ({})'.format(i,
+                #                                                                                                      path.nodes,
+                #                                                                                                      path.delay,
+                #                                                                                                      path.bandwidth,
+                #                                                                                                      path.hopCount,path.TSNFlowCounter,
+                #                                                                                                                                 Delta))
+                #         i = i +1
+                #         if (Delta > maxDelta):
+                #             maxDelta = Delta
+                #             #tempTSNFlow.path = path
+                #     for index in range(len(tempTSNFlow.path.nodes)):
+                #         if (index == 0 or index > len(tempTSNFlow.path.nodes) - 3):
+                #             continue
+                #         G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)]['nbOfTSN'] = G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)]['nbOfTSN'] +1
+                # print('==========================')
+
+
+
+
+
+            tempScheduledSWOTS = SWOTS(G,tempTSNFlow,scheduledFlowsSWOTS,CLength)
+            if(tempScheduledSWOTS):
+                scheduledCounterSWOTS = scheduledCounterSWOTS + 1
+
+
+            # i = 3
+            # b = 5
+            # text = '{},{}'.format(i,b)
+            # print(text)
+            # x =3
+            # w =4
+            # zag = '{},{}'.format(x,w)
+            # if(text == zag):
+            #     print('yes')
+
+
+
+        time = time + 1
+
+
+
+
+
+    # for scheduledItem in scheduledFlowsSWOTS:
+    #     tempFlow = scheduledItem.__getitem__(0)
+    #     tempStartTime = scheduledItem.__getitem__(1)
+    #     tempPath = tempFlow.path
+    #     displayPath = display(tempPath)
+    #     print('Flow ({}) arrived at time ({}), routed through {}, scheduled at ({})'.format(tempFlow.id, findFlowArrivalTime(tempFlow,flowsList),displayPath, tempStartTime))
+
+
+
 
 
 
@@ -190,6 +530,9 @@ def main():
     #                     else:
     #                         text = text + str(list(path.nodes).__getitem__(i)) + 'processing delay =' + str(findHost(hostsList,list(path.nodes).__getitem__(i)).processingDelay) + '\n'
     #                 print(text)
+
+
+
 
 
     # for i in nx.edges(G, G.nodes):
