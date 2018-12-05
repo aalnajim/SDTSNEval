@@ -389,13 +389,13 @@ def main():
 
     # Setting the simulation parameters #
     ##########################################
-    n= 5                    #number of nodes
-    hosts = 4               #number of hosts
-    nbOfTSNFlows = 100       #number of TSN flows
+    n= 15                   #number of nodes
+    hosts = 10              #number of hosts
+    nbOfTSNFlows = 500      #number of TSN flows
     pFlow = 0.1             #the probability that a flow will arrive at each time unit
-    p= 0.5                  #the probability of having an edge between any two nodes
+    p= 0.2                  #the probability of having an edge between any two nodes
     k = 5                   #the number of paths that will be chosen between each source and destination
-    timeSlotsAmount = 20    #How many time slots in the schedule --> the length of the schedule
+    timeSlotsAmount = 5     #how many time slots in the schedule --> the length of the schedule
     TSNCountWeight = 1/3
     bandwidthWeight = 1/3
     hopCountWeight = 1/3
@@ -427,9 +427,14 @@ def main():
     ##########################################
 
     G = G.to_directed(False)
+
+
     # pre-routing phase #
     ##########################################
+    start = timer()
     firstKthPaths = findKthPath(G,hostsList,k) # The first kth paths between all the hosts (based on path delay)
+    end = timer()
+    print(((end-start)/60)/60)
     ##########################################
 
     CLength = 0           #the schedule cycle length
@@ -486,6 +491,7 @@ def main():
 
             if(tempRouted):
                 routedCounter = routedCounter + 1
+
                 # print('Flow ({}) from Source ({}) to destination ({}) with maximum delay = ({}) routed through {}'.format(tempTSNFlow.id,tempTSNFlow.source.id,tempTSNFlow.destniation.id,tempTSNFlow.flowMaxDelay,tempTSNFlow.path.nodes))
                 # if len(candidatePaths) == 0:
                 #     print('there is no candidate paths')
@@ -545,6 +551,13 @@ def main():
 
             if(tempScheduledSWOTS):
                 scheduledCounterSWOTS = scheduledCounterSWOTS + 1
+                for index in range(len(tempTSNFlow.path.nodes)):
+                    if (index == 0 or index > len(tempTSNFlow.path.nodes) - 3):
+                        continue
+                    G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
+                        'nbOfTSN'] = \
+                    G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
+                        'nbOfTSN'] + 1
 
 
             if(len(flowsList) == 0):
@@ -563,6 +576,13 @@ def main():
 
             if(tempScheduledSWTS):
                 scheduledCounterSWTS = scheduledCounterSWTS + 1
+                for index in range(len(tempTSNFlow.path.nodes)):
+                    if (index == 0 or index > len(tempTSNFlow.path.nodes) - 3):
+                        continue
+                    G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
+                        'nbOfTSN'] = \
+                    G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
+                        'nbOfTSN'] + 1
 
 
 
@@ -596,6 +616,11 @@ def main():
     print(routingExecutionTimes)
     print(SWOTSSchedulingExectionTimes)
     print(SWTSSchedulingExectionTimes)
+
+
+    print(routedCounter)
+    print(scheduledCounterSWOTS)
+    print(scheduledCounterSWTS)
 
 
 
@@ -665,7 +690,7 @@ def main():
 
 
     # for i in nx.edges(G, G.nodes):
-    #     print(G[i[0]][i[1]]['processingDelay'])
+    #     print(G[i[0]][i[1]]['nbOfTSN'])
 
 
     #print(nx.edges(G,G.nodes))
