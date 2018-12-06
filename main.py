@@ -391,7 +391,7 @@ def main():
     ##########################################
     n= 15                   #number of nodes
     hosts = 15              #number of hosts
-    nbOfTSNFlows = 950      #number of TSN flows
+    nbOfTSNFlows = 1000      #number of TSN flows
     pFlow = 0.1             #the probability that a flow will arrive at each time unit
     p= 0.3                  #the probability of having an edge between any two nodes
     k = 10                   #the number of paths that will be chosen between each source and destination
