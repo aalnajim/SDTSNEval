@@ -390,12 +390,12 @@ def main():
     # Setting the simulation parameters #
     ##########################################
     n= 15                   #number of nodes
-    hosts = 10              #number of hosts
-    nbOfTSNFlows = 500      #number of TSN flows
+    hosts = 15              #number of hosts
+    nbOfTSNFlows = 950      #number of TSN flows
     pFlow = 0.1             #the probability that a flow will arrive at each time unit
-    p= 0.2                  #the probability of having an edge between any two nodes
-    k = 5                   #the number of paths that will be chosen between each source and destination
-    timeSlotsAmount = 5     #how many time slots in the schedule --> the length of the schedule
+    p= 0.3                  #the probability of having an edge between any two nodes
+    k = 10                   #the number of paths that will be chosen between each source and destination
+    timeSlotsAmount = 20     #how many time slots in the schedule --> the length of the schedule
     TSNCountWeight = 1/3
     bandwidthWeight = 1/3
     hopCountWeight = 1/3
@@ -434,7 +434,7 @@ def main():
     start = timer()
     firstKthPaths = findKthPath(G,hostsList,k) # The first kth paths between all the hosts (based on path delay)
     end = timer()
-    print(((end-start)/60)/60)
+    # print(((end-start)/60)/60)
     ##########################################
 
     CLength = 0           #the schedule cycle length
@@ -541,23 +541,23 @@ def main():
 
 
 
-            # Scheduling WithOut Time Slots (SWOTS) #
-            ##########################################
-            start = timer()
-            tempScheduledSWOTS = SWOTS(G, tempTSNFlow, scheduledFlowsSWOTS, CLength)
-            end = timer()
-            SWOTSSchedulingExectionTimes.append((((end - start) * 1000 * 1000), tempScheduledSWOTS))
-            ##########################################
-
-            if(tempScheduledSWOTS):
-                scheduledCounterSWOTS = scheduledCounterSWOTS + 1
-                for index in range(len(tempTSNFlow.path.nodes)):
-                    if (index == 0 or index > len(tempTSNFlow.path.nodes) - 3):
-                        continue
-                    G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
-                        'nbOfTSN'] = \
-                    G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
-                        'nbOfTSN'] + 1
+            # # Scheduling WithOut Time Slots (SWOTS) #
+            # ##########################################
+            # start = timer()
+            # tempScheduledSWOTS = SWOTS(G, tempTSNFlow, scheduledFlowsSWOTS, CLength)
+            # end = timer()
+            # SWOTSSchedulingExectionTimes.append((((end - start) * 1000 * 1000), tempScheduledSWOTS))
+            # ##########################################
+            #
+            # if(tempScheduledSWOTS):
+            #     scheduledCounterSWOTS = scheduledCounterSWOTS + 1
+            #     for index in range(len(tempTSNFlow.path.nodes)):
+            #         if (index == 0 or index > len(tempTSNFlow.path.nodes) - 3):
+            #             continue
+            #         G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
+            #             'nbOfTSN'] = \
+            #         G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
+            #             'nbOfTSN'] + 1
 
 
             if(len(flowsList) == 0):
@@ -566,7 +566,7 @@ def main():
                 FTT = flowsList.__getitem__(0).__getitem__(1)
 
 
-            # Scheduling With Time Slots (SWTS #
+            # Scheduling With Time Slots (SWTS) #
             ##########################################
             start = timer()
             tempScheduledSWTS = SWTS(G, tempTSNFlow, scheduledFlowsSWTS, CLength, timeSlots, time, FTT)
@@ -607,20 +607,50 @@ def main():
 
 
 
-    nbOfGates, nbOfmergedGates = countGates(G,scheduledFlowsSWOTS)
-    print(nbOfGates)
-    print(nbOfmergedGates)
-    reducePrecentage = (nbOfmergedGates/nbOfGates)*100
-    print('{}%'.format(reducePrecentage))
+    # nbOfGates, nbOfmergedGates = countGates(G,scheduledFlowsSWOTS)
+    # print(nbOfGates)
+    # print(nbOfmergedGates)
+    # reducePrecentage = (nbOfmergedGates/nbOfGates)*100
+    print('The total number of flows: {}'.format(nbOfTSNFlows))
+    # print('The percentage of reduced gates: {}%'.format(reducePrecentage))
+    # print('nb of scheduled flows using SWOTS: {}'.format(scheduledCounterSWOTS))
+    print('nb of scheduled flows using SWTS: {}'.format(scheduledCounterSWTS))
+    ##
+    total = 0
+    for x in routingExecutionTimes:
+        total = total +x.__getitem__(0)
+    averageRoutingTime = total/len(routingExecutionTimes)
+    print('Average routing Time: {}'.format(averageRoutingTime))
 
-    print(routingExecutionTimes)
-    print(SWOTSSchedulingExectionTimes)
-    print(SWTSSchedulingExectionTimes)
+
+    total = 0
+    for x in SWTSSchedulingExectionTimes:
+        total = total +x.__getitem__(0)
+    averageSWTSTime = total/len(routingExecutionTimes)
+    print('Average SWTS Time: {}'.format(averageSWTSTime))
 
 
-    print(routedCounter)
-    print(scheduledCounterSWOTS)
-    print(scheduledCounterSWTS)
+    # total = 0
+    # for x in SWOTSSchedulingExectionTimes:
+    #     total = total +x.__getitem__(0)
+    # averageSWOTSTime = total/len(SWOTSSchedulingExectionTimes)
+    # print('Average SWOTS Time: {}'.format(averageSWOTSTime))
+
+
+    ##
+
+
+
+
+
+    # print(routingExecutionTimes)
+    # print(SWOTSSchedulingExectionTimes)
+    # print(SWTSSchedulingExectionTimes)
+    #
+    #
+    # print(routedCounter)
+    # print(scheduledCounterSWOTS)
+    # print(scheduledCounterSWTS)
 
 
 
