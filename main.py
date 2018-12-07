@@ -391,11 +391,11 @@ def main():
     ##########################################
     n= 15                   #number of nodes
     hosts = 15              #number of hosts
-    nbOfTSNFlows = 1000      #number of TSN flows
+    nbOfTSNFlows = 100      #number of TSN flows
     pFlow = 0.1             #the probability that a flow will arrive at each time unit
     p= 0.3                  #the probability of having an edge between any two nodes
     k = 10                   #the number of paths that will be chosen between each source and destination
-    timeSlotsAmount = 20     #how many time slots in the schedule --> the length of the schedule
+    timeSlotsAmount = 5     #how many time slots in the schedule --> the length of the schedule
     TSNCountWeight = 1/3
     bandwidthWeight = 1/3
     hopCountWeight = 1/3
@@ -541,23 +541,24 @@ def main():
 
 
 
-            # # Scheduling WithOut Time Slots (SWOTS) #
-            # ##########################################
-            # start = timer()
-            # tempScheduledSWOTS = SWOTS(G, tempTSNFlow, scheduledFlowsSWOTS, CLength)
-            # end = timer()
-            # SWOTSSchedulingExectionTimes.append((((end - start) * 1000 * 1000), tempScheduledSWOTS))
-            # ##########################################
-            #
-            # if(tempScheduledSWOTS):
-            #     scheduledCounterSWOTS = scheduledCounterSWOTS + 1
-            #     for index in range(len(tempTSNFlow.path.nodes)):
-            #         if (index == 0 or index > len(tempTSNFlow.path.nodes) - 3):
-            #             continue
-            #         G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
-            #             'nbOfTSN'] = \
-            #         G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
-            #             'nbOfTSN'] + 1
+            # Scheduling WithOut Time Slots (SWOTS) #
+            ##########################################
+            start = timer()
+            tempScheduledSWOTS = SWOTS(G, tempTSNFlow, scheduledFlowsSWOTS, CLength)
+            end = timer()
+            SWOTSSchedulingExectionTimes.append((((end - start) * 1000 * 1000), tempScheduledSWOTS))
+            ##########################################
+            print((end - start) * 1000 * 1000)
+
+            if(tempScheduledSWOTS):
+                scheduledCounterSWOTS = scheduledCounterSWOTS + 1
+                for index in range(len(tempTSNFlow.path.nodes)):
+                    if (index == 0 or index > len(tempTSNFlow.path.nodes) - 3):
+                        continue
+                    G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
+                        'nbOfTSN'] = \
+                    G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
+                        'nbOfTSN'] + 1
 
 
             if(len(flowsList) == 0):
@@ -566,23 +567,24 @@ def main():
                 FTT = flowsList.__getitem__(0).__getitem__(1)
 
 
-            # Scheduling With Time Slots (SWTS) #
-            ##########################################
-            start = timer()
-            tempScheduledSWTS = SWTS(G, tempTSNFlow, scheduledFlowsSWTS, CLength, timeSlots, time, FTT)
-            end = timer()
-            SWTSSchedulingExectionTimes.append((((end - start) * 1000 * 1000), tempScheduledSWTS))
-            ##########################################
-
-            if(tempScheduledSWTS):
-                scheduledCounterSWTS = scheduledCounterSWTS + 1
-                for index in range(len(tempTSNFlow.path.nodes)):
-                    if (index == 0 or index > len(tempTSNFlow.path.nodes) - 3):
-                        continue
-                    G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
-                        'nbOfTSN'] = \
-                    G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
-                        'nbOfTSN'] + 1
+            # # Scheduling With Time Slots (SWTS) #
+            # ##########################################
+            # start = timer()
+            # tempScheduledSWTS = SWTS(G, tempTSNFlow, scheduledFlowsSWTS, CLength, timeSlots, time, FTT)
+            # end = timer()
+            # SWTSSchedulingExectionTimes.append((((end - start) * 1000 * 1000), tempScheduledSWTS))
+            # ##########################################
+            #
+            #
+            # if(tempScheduledSWTS):
+            #     scheduledCounterSWTS = scheduledCounterSWTS + 1
+            #     for index in range(len(tempTSNFlow.path.nodes)):
+            #         if (index == 0 or index > len(tempTSNFlow.path.nodes) - 3):
+            #             continue
+            #         G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
+            #             'nbOfTSN'] = \
+            #         G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
+            #             'nbOfTSN'] + 1
 
 
 
