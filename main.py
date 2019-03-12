@@ -613,7 +613,7 @@ def main():
     # print(nbOfGates)
     # print(nbOfmergedGates)
     # reducePrecentage = (nbOfmergedGates/nbOfGates)*100
-    print('The total number of flows: {}'.format(nbOfTSNFlows))
+    print('The total number of flows are: {}'.format(nbOfTSNFlows))
     # print('The percentage of reduced gates: {}%'.format(reducePrecentage))
     # print('nb of scheduled flows using SWOTS: {}'.format(scheduledCounterSWOTS))
     print('nb of scheduled flows using SWTS: {}'.format(scheduledCounterSWTS))
@@ -731,8 +731,3 @@ def main():
 
 
 main()
-
-
-
-
-
