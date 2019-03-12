@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="87e1c4b4-4c5f-41e4-ad25-e405fa45d371" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-    </list>
+    <list default="true" id="87e1c4b4-4c5f-41e4-ad25-e405fa45d371" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/venv/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -12,15 +10,15 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/SDTSNEval$main.coverage" NAME="main Coverage Results" MODIFIED="1552418784810" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SDTSNEval$main.coverage" NAME="main Coverage Results" MODIFIED="1552423123568" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="615" column="36" selection-start-line="615" selection-start-column="36" selection-end-line="615" selection-end-column="36" />
+            <state relative-caret-position="238">
+              <caret line="611" column="30" selection-start-line="611" selection-start-column="30" selection-end-line="611" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -37,11 +35,11 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="-1648" />
-    <option name="y" value="37" />
-    <option name="width" value="1400" />
-    <option name="height" value="1024" />
+  <component name="ProjectFrameBounds" extendedState="1">
+    <option name="x" value="218" />
+    <option name="y" value="4" />
+    <option name="width" value="3150" />
+    <option name="height" value="2194" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -64,7 +62,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$USER_HOME$/PycharmProjects/test" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../test" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -120,22 +118,22 @@
       <workItem from="1552417361083" duration="32000" />
       <workItem from="1552417408200" duration="62000" />
       <workItem from="1552418778278" duration="43000" />
+      <workItem from="1552423103390" duration="149000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="137000" />
+    <option name="totallyTimeSpent" value="286000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1648" y="37" width="1400" height="1024" extended-state="0" />
-    <editor active="true" />
+    <frame x="33" y="135" width="1400" height="974" extended-state="0" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25746268" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2611607" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32996634" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.31242603" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -149,7 +147,7 @@
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="SciView" order="3" visible="true" weight="0.32985073" />
+      <window_info anchor="right" id="SciView" order="3" visible="true" weight="0.3296131" />
       <window_info anchor="right" id="R Graphics" order="4" />
       <window_info anchor="right" id="R Packages" order="5" />
       <window_info anchor="right" id="Database" order="6" />
@@ -161,8 +159,8 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="615" column="36" selection-start-line="615" selection-start-column="36" selection-end-line="615" selection-end-column="36" />
+        <state relative-caret-position="238">
+          <caret line="611" column="30" selection-start-line="611" selection-start-column="30" selection-end-line="611" selection-end-column="30" />
         </state>
       </provider>
     </entry>
