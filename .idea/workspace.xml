@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="87e1c4b4-4c5f-41e4-ad25-e405fa45d371" name="Default Changelist" comment="" />
+    <list default="true" id="87e1c4b4-4c5f-41e4-ad25-e405fa45d371" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/venv/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,7 +19,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
+            <state relative-caret-position="34">
               <caret line="611" column="30" selection-start-line="611" selection-start-column="30" selection-end-line="611" selection-end-column="30" />
             </state>
           </provider>
@@ -35,9 +37,9 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
-    <option name="x" value="218" />
-    <option name="y" value="4" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="216" />
+    <option name="y" value="2" />
     <option name="width" value="3150" />
     <option name="height" value="2194" />
   </component>
@@ -46,17 +48,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="SDTSNEval" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SDTSNEval" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
+      <pane id="ProjectPane" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -119,16 +111,18 @@
       <workItem from="1552417408200" duration="62000" />
       <workItem from="1552418778278" duration="43000" />
       <workItem from="1552423103390" duration="149000" />
+      <workItem from="1552423278399" duration="253000" />
+      <workItem from="1552437245479" duration="24000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="286000" />
+    <option name="totallyTimeSpent" value="563000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="33" y="135" width="1400" height="974" extended-state="0" />
+    <frame x="96" y="1" width="1400" height="975" extended-state="0" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2611607" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.26860118" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -139,7 +133,7 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="Version Control" order="8" visible="true" weight="0.32978722" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Terminal" order="11" />
@@ -147,7 +141,7 @@
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="SciView" order="3" visible="true" weight="0.3296131" />
+      <window_info active="true" anchor="right" id="SciView" order="3" visible="true" weight="0.3296131" />
       <window_info anchor="right" id="R Graphics" order="4" />
       <window_info anchor="right" id="R Packages" order="5" />
       <window_info anchor="right" id="Database" order="6" />
@@ -159,7 +153,7 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
+        <state relative-caret-position="34">
           <caret line="611" column="30" selection-start-line="611" selection-start-column="30" selection-end-line="611" selection-end-column="30" />
         </state>
       </provider>
