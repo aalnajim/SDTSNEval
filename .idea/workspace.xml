@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="87e1c4b4-4c5f-41e4-ad25-e405fa45d371" name="Default Changelist" comment="" />
+    <list default="true" id="3cc8129e-0ac2-4c16-8f48-5278e06dc291" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/venv/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -10,20 +12,46 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/SDTSNEval$main.coverage" NAME="main Coverage Results" MODIFIED="1552423123568" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SDTSNEval$main.coverage" NAME="main Coverage Results" MODIFIED="1552436339585" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="611" column="30" selection-start-line="611" selection-start-column="30" selection-end-line="611" selection-end-column="30" />
+            <state relative-caret-position="-2209">
+              <caret line="543" selection-start-line="543" selection-end-line="543" />
+              <folding>
+                <element signature="e#1#14#0" expanded="true" />
+                <element signature="e#258#973#0" />
+                <element signature="e#1119#2964#0" />
+                <element signature="e#3004#3548#0" />
+                <element signature="e#3586#3707#0" />
+                <element signature="e#3751#3924#0" />
+                <element signature="e#3973#4684#0" />
+                <element signature="e#4722#5119#0" />
+                <element signature="e#5225#6596#0" />
+                <element signature="e#6659#7027#0" />
+                <element signature="e#7070#7234#0" />
+                <element signature="e#7276#9574#0" />
+                <element signature="e#9638#10619#0" />
+                <element signature="e#10699#12338#0" />
+                <element signature="e#12364#12709#0" />
+                <element signature="e#12757#13004#0" />
+                <element signature="e#13046#13998#0" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -31,15 +59,19 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
+        <option value="$PROJECT_DIR$/TSNFlow.py" />
+        <option value="$PROJECT_DIR$/Path.py" />
+        <option value="$PROJECT_DIR$/operation" />
+        <option value="$PROJECT_DIR$/TimeSlot.py" />
         <option value="$PROJECT_DIR$/main.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
-    <option name="x" value="218" />
-    <option name="y" value="4" />
-    <option name="width" value="3150" />
-    <option name="height" value="2194" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-1006" />
+    <option name="y" value="89" />
+    <option name="width" value="2048" />
+    <option name="height" value="1051" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -53,6 +85,11 @@
               <item name="SDTSNEval" type="b2602c69:ProjectViewProjectNode" />
               <item name="SDTSNEval" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="SDTSNEval" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SDTSNEval" type="462c0819:PsiDirectoryNode" />
+              <item name="venv" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -61,8 +98,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../test" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -110,59 +146,131 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="87e1c4b4-4c5f-41e4-ad25-e405fa45d371" name="Default Changelist" comment="" />
-      <created>1552417359989</created>
+      <changelist id="3cc8129e-0ac2-4c16-8f48-5278e06dc291" name="Default Changelist" comment="" />
+      <created>1542939443266</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1552417359989</updated>
-      <workItem from="1552417361083" duration="32000" />
-      <workItem from="1552417408200" duration="62000" />
-      <workItem from="1552418778278" duration="43000" />
-      <workItem from="1552423103390" duration="149000" />
+      <updated>1542939443266</updated>
+      <workItem from="1542939444319" duration="2500000" />
+      <workItem from="1542943008047" duration="12726000" />
+      <workItem from="1542994181878" duration="11484000" />
+      <workItem from="1543070413388" duration="20125000" />
+      <workItem from="1543103054870" duration="18771000" />
+      <workItem from="1544063070642" duration="19675000" />
+      <workItem from="1544153328989" duration="71000" />
+      <workItem from="1544206999318" duration="13287000" />
+      <workItem from="1550894166502" duration="26000" />
+      <workItem from="1552435376977" duration="110000" />
+      <workItem from="1552435525452" duration="787000" />
+    </task>
+    <task id="LOCAL-00001" summary="Fixed the dictionary issue">
+      <created>1542941396648</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1542941396648</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Added some features">
+      <created>1542944524643</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1542944524643</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Fix some issues">
+      <created>1542952965813</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1542952965813</updated>
+    </task>
+    <task id="LOCAL-00004" summary="The pre routing phase">
+      <created>1542957426831</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1542957426831</updated>
+    </task>
+    <task id="LOCAL-00005" summary="The pre routing phase">
+      <created>1542957508859</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1542957508859</updated>
+    </task>
+    <task id="LOCAL-00006" summary="The pre routing phase">
+      <created>1543108877775</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1543108877776</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Execution Times">
+      <created>1543121528997</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1543121528997</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Calculating Number of Gates">
+      <created>1543126061288</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1543126061288</updated>
+    </task>
+    <task id="LOCAL-00009" summary="SWTS Simulation">
+      <created>1544081228652</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1544081228652</updated>
+    </task>
+    <task id="LOCAL-00010" summary="SWTS Simulation">
+      <created>1544086156429</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1544086156429</updated>
+    </task>
+    <task id="LOCAL-00011" summary="SWTS Simulation">
+      <created>1544153368195</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1544153368195</updated>
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="286000" />
+    <option name="totallyTimeSpent" value="28000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="33" y="135" width="1400" height="974" extended-state="0" />
+    <frame x="4" y="23" width="2048" height="1051" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2611607" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1889332" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.31242603" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49750748" weight="0.18873827" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39926064" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.4985045" visible="true" weight="0.3295099" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
-      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
+      <window_info active="true" anchor="bottom" id="Event Log" order="10" sideWeight="0.50149554" side_tool="true" visible="true" weight="0.3295099" />
       <window_info anchor="bottom" id="Terminal" order="11" />
       <window_info anchor="bottom" id="Python Console" order="12" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="SciView" order="3" visible="true" weight="0.3296131" />
+      <window_info anchor="right" id="SciView" order="3" visible="true" weight="0.24975075" />
       <window_info anchor="right" id="R Graphics" order="4" />
       <window_info anchor="right" id="R Packages" order="5" />
       <window_info anchor="right" id="Database" order="6" />
     </layout>
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
-  </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="611" column="30" selection-start-line="611" selection-start-column="30" selection-end-line="611" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
   </component>
 </project>
