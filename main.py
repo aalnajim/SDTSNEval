@@ -7,11 +7,14 @@ import TSNHost
 import Path
 import operation
 import TimeSlot
+import myThread
+import myThread2
 import math
 from timeit import default_timer as timer
-
-
+from itertools import islice
 from TSNHost import TSNHost
+from myThread import myThread
+from myThread2 import myThread2
 
 
 
@@ -48,59 +51,325 @@ def rand(G,hosts, n):
 #             return h
 
 
-def findAllPath(G,hostsList):
 
+
+##############################
+# this method is to calcualte the overall delay for each link based on (the link delay and the switch delays) 0 to split and 1 to combine
+def convertProcDelayToComulativeDelay(G,x):
+    #x has to be 0 or 1
+    if (x ==0):
+        for i in nx.edges(G, G.nodes):
+            transmissionDelay = G.nodes[i[0]]['transmissionDelay']
+            processingAndPropDelay = G[i[0]][i[1]]['processingDelay']
+            G[i[0]][i[1]]['processingDelay'] = processingAndPropDelay - transmissionDelay
+
+    elif(x==1):
+        for i in nx.edges(G, G.nodes):
+            transmissionDelay = G.nodes[i[0]]['transmissionDelay']
+            processingAndPropDelay = G[i[0]][i[1]]['processingDelay']
+            G[i[0]][i[1]]['processingDelay'] = transmissionDelay + processingAndPropDelay
+
+    else:
+        print('You have to enter 1 to combine or 0 to split')
+
+
+#this method is added recently to find k shortest paths
+def k_shortest_paths(G, source, target, k, weight=None):
+    return list(islice(nx.shortest_simple_paths(G, source, target, weight=weight), k))
+
+
+#this method is added recently to enhance K shortest path and use multithreading
+# def findKthPathP(G,hostsList,k): speed
+#     allPaths = {}  # all the paths between all the hosts
+#
+#     # Create new threads
+#     thread1 = myThread(allPaths, G,hostsList,k, (0 * math.floor(len(hostsList) / 10)), ((1 * math.floor(len(hostsList) / 10))))
+#     thread2 = myThread(allPaths, G,hostsList,k, (1 * math.floor(len(hostsList) / 10)), (2 * math.floor(len(hostsList) / 10)))
+#     thread3 = myThread(allPaths, G,hostsList,k, (2 * math.floor(len(hostsList) / 10)), (3 * math.floor(len(hostsList) / 10)))
+#     thread4 = myThread(allPaths, G,hostsList,k, (3 * math.floor(len(hostsList) / 10)), (4 * math.floor(len(hostsList) / 10)))
+#     thread5 = myThread(allPaths, G,hostsList,k, (4 * math.floor(len(hostsList) / 10)), (5 * math.floor(len(hostsList) / 10)))
+#     thread6 = myThread(allPaths, G,hostsList,k, (5 * math.floor(len(hostsList) / 10)), (6 * math.floor(len(hostsList) / 10)))
+#     thread7 = myThread(allPaths, G,hostsList,k, (6 * math.floor(len(hostsList) / 10)), (7 * math.floor(len(hostsList) / 10)))
+#     thread8 = myThread(allPaths, G,hostsList,k, (7 * math.floor(len(hostsList) / 10)), (8 * math.floor(len(hostsList) / 10)))
+#     thread9 = myThread(allPaths, G,hostsList,k, (8 * math.floor(len(hostsList) / 10)), (9 * math.floor(len(hostsList) / 10)))
+#     thread10 = myThread(allPaths, G,hostsList,k, (9 * math.floor(len(hostsList) / 10)), ((10 * math.floor(len(hostsList) / 10)) + len(hostsList) % 10))
+#
+#     # Start new Threads
+#     thread1.start()
+#     thread2.start()
+#     thread3.start()
+#     thread4.start()
+#     thread5.start()
+#     thread6.start()
+#     thread7.start()
+#     thread8.start()
+#     thread9.start()
+#     thread10.start()
+#
+#     # join new Threads
+#     thread1.join()
+#     thread2.join()
+#     thread3.join()
+#     thread4.join()
+#     thread5.join()
+#     thread6.join()
+#     thread7.join()
+#     thread8.join()
+#     thread9.join()
+#     thread10.join()
+#
+#     print("done!")
+#     return allPaths
+
+
+#this method is added recently to enhance K shortest path and use multithreading
+# def findKthPathP2(G,hostsList,k): speed
+#     allPaths = {}  # all the paths between all the hosts
+#
+#     # Create new threads
+#     thread1 = myThread2(allPaths, G,hostsList,k, (0 * math.floor(len(hostsList) / 10)), ((1 * math.floor(len(hostsList) / 10))))
+#     thread2 = myThread2(allPaths, G,hostsList,k, (1 * math.floor(len(hostsList) / 10)), (2 * math.floor(len(hostsList) / 10)))
+#     thread3 = myThread2(allPaths, G,hostsList,k, (2 * math.floor(len(hostsList) / 10)), (3 * math.floor(len(hostsList) / 10)))
+#     thread4 = myThread2(allPaths, G,hostsList,k, (3 * math.floor(len(hostsList) / 10)), (4 * math.floor(len(hostsList) / 10)))
+#     thread5 = myThread2(allPaths, G,hostsList,k, (4 * math.floor(len(hostsList) / 10)), (5 * math.floor(len(hostsList) / 10)))
+#     thread6 = myThread2(allPaths, G,hostsList,k, (5 * math.floor(len(hostsList) / 10)), (6 * math.floor(len(hostsList) / 10)))
+#     thread7 = myThread2(allPaths, G,hostsList,k, (6 * math.floor(len(hostsList) / 10)), (7 * math.floor(len(hostsList) / 10)))
+#     thread8 = myThread2(allPaths, G,hostsList,k, (7 * math.floor(len(hostsList) / 10)), (8 * math.floor(len(hostsList) / 10)))
+#     thread9 = myThread2(allPaths, G,hostsList,k, (8 * math.floor(len(hostsList) / 10)), (9 * math.floor(len(hostsList) / 10)))
+#     thread10 = myThread2(allPaths, G,hostsList,k, (9 * math.floor(len(hostsList) / 10)), ((10 * math.floor(len(hostsList) / 10)) + len(hostsList) % 10))
+#
+#     # Start new Threads
+#     thread1.start()
+#     thread2.start()
+#     thread3.start()
+#     thread4.start()
+#     thread5.start()
+#     thread6.start()
+#     thread7.start()
+#     thread8.start()
+#     thread9.start()
+#     thread10.start()
+#
+#     # join new Threads
+#     thread1.join()
+#     thread2.join()
+#     thread3.join()
+#     thread4.join()
+#     thread5.join()
+#     thread6.join()
+#     thread7.join()
+#     thread8.join()
+#     thread9.join()
+#     thread10.join()
+#
+#     print("done!")
+#     return allPaths
+
+##############################
+
+
+
+#def findAllPath(G,hostsList):
+def findKthPath(G,hostsList,k):
     allPaths = {}  # all the paths between all the hosts
-
     for s in hostsList:
         for d in hostsList:
             paths = []
+            paths2=[]
             if (s.id == d.id):
                 continue
             if (s.accessPoint == d.accessPoint):
-                tempNodes = [s, s.accessPoint, d] ############################################################################
-                tempDelay = s.transmissonDelay + s.processingDelay + G.nodes[s.accessPoint]['transmissionDelay'] + d.processingDelay
-                tempPath = Path.Path(tempNodes,tempDelay)
+                tempNodes = [s, s.accessPoint,
+                             d]  ############################################################################
+                tempNodes2 = [d, d.accessPoint, s]
+                tempDelay = s.transmissonDelay + s.processingDelay + G.nodes[s.accessPoint][
+                    'transmissionDelay'] + d.processingDelay
+                tempDelay2 = d.transmissonDelay + d.processingDelay + G.nodes[d.accessPoint][
+                    'transmissionDelay'] + s.processingDelay
+                tempPath = Path.Path(tempNodes, tempDelay)
+                tempPath2 = Path.Path(tempNodes2, tempDelay2)
                 paths.append(tempPath)
+                paths2.append(tempPath2)
                 allPaths[s.id, d.id] = paths
+                allPaths[d.id, s.id] = paths2
                 continue
             else:
-                for path in nx.all_simple_paths(G, s.accessPoint, d.accessPoint):
+                tempList = list(
+                    islice(nx.shortest_simple_paths(G, s.accessPoint, d.accessPoint, weight='processingDelay'),
+                           k))
+                for path in tempList:
                     if (len(path) < 8):
-                        tempNodes = [s] ############################################################################
+                        path2 = path.copy()
+                        path2.reverse()
+
+                        tempNodes = [
+                            s]  ############################################################################
+                        tempNodes2 = [d]
                         tempDelay = s.transmissonDelay + s.processingDelay
+                        tempDelay2 = d.transmissonDelay + d.processingDelay
                         i = 1
                         for n in range(len(path)):
                             tempNodes.append(list(path).__getitem__(n))
+                            tempNodes2.append(list(path2).__getitem__(n))
                             tempDelay = tempDelay + G.nodes[list(path).__getitem__(n)]['transmissionDelay']
-                            if(i < len(path)):
-                                tempDelay = tempDelay + G[list(path).__getitem__(n)][list(path).__getitem__(n+1)]['processingDelay']
+                            tempDelay2 = tempDelay2 + G.nodes[list(path2).__getitem__(n)]['transmissionDelay']
+                            if (i < len(path)):
+                                tempDelay = tempDelay + \
+                                            G[list(path).__getitem__(n)][list(path).__getitem__(n + 1)][
+                                                'processingDelay'] - G.nodes[list(path).__getitem__(n)][
+                                                'transmissionDelay']
+                                tempDelay2 = tempDelay2 + \
+                                             G[list(path2).__getitem__(n)][list(path2).__getitem__(n + 1)][
+                                                 'processingDelay'] - G.nodes[list(path2).__getitem__(n)][
+                                                 'transmissionDelay']
                             i = i + 1
-                        tempNodes.append(d) ############################################################################
+                        tempNodes.append(
+                            d)  ############################################################################
+                        tempNodes2.append(
+                            s)
                         tempDelay = tempDelay + d.processingDelay
-                        tempPath = Path.Path(tempNodes,tempDelay)
+                        tempDelay2 = tempDelay2 + s.processingDelay
+                        tempPath = Path.Path(tempNodes, tempDelay)
+                        tempPath2 = Path.Path(tempNodes2, tempDelay2)
                         paths.append(tempPath)
+                        paths2.append(tempPath2)
                         allPaths[s.id, d.id] = paths
+                        allPaths[d.id, s.id] = paths2
+
+                # for path in nx.all_simple_paths(G, s.accessPoint, d.accessPoint):
+                #     if (len(path) < 8):
+                #         tempNodes = [s] ############################################################################
+                #         tempDelay = s.transmissonDelay + s.processingDelay
+                #         i = 1
+                #         for n in range(len(path)):
+                #             tempNodes.append(list(path).__getitem__(n))
+                #             tempDelay = tempDelay + G.nodes[list(path).__getitem__(n)]['transmissionDelay']
+                #             if(i < len(path)):
+                #                 tempDelay = tempDelay + G[list(path).__getitem__(n)][list(path).__getitem__(n+1)]['processingDelay']
+                #             i = i + 1
+                #         tempNodes.append(d) ############################################################################
+                #         tempDelay = tempDelay + d.processingDelay
+                #         tempPath = Path.Path(tempNodes,tempDelay)
+                #         paths.append(tempPath)
+                #         allPaths[s.id, d.id] = paths
 
     return allPaths
 
 
-def findKthPath(G, hostsList,K):
-    allPaths = findAllPath(G,hostsList)   #all the paths between all the hosts
-    for s in hostsList:
-        for d in hostsList:
-            if (s.id == d.id):
-                continue
-            else:
-                if(s.id, d.id) in allPaths.keys():
-                    paths = allPaths[s.id, d.id]
-                    paths.sort(key= lambda x: x.delay)
-                    if(len(paths)>K):
-                        gap = len(paths) - K
-                        for i in range(gap):
-                            paths.pop()
 
-    return allPaths
+# #def findAllPath(G,hostsList): speed
+# def findKthPath2(G,hostsList,k):
+#     allPaths = {}  # all the paths between all the hosts
+#     for s in hostsList:
+#         for d in hostsList:
+#             paths = []
+#             if (s.id == d.id):
+#                 continue
+#             if (s.accessPoint == d.accessPoint):
+#                 tempNodes = [s, s.accessPoint, d] ############################################################################
+#                 tempDelay = s.transmissonDelay + s.processingDelay + G.nodes[s.accessPoint]['transmissionDelay'] + d.processingDelay
+#                 tempPath = Path.Path(tempNodes,tempDelay)
+#                 paths.append(tempPath)
+#                 allPaths[s.id, d.id] = paths
+#                 continue
+#             else:
+#                 tempList = list(islice(nx.shortest_simple_paths(G, s.accessPoint, d.accessPoint, weight='processingDelay'),k))
+#                 for path in tempList:
+#                     if(len(path) < 8):
+#                         tempNodes = [s] ############################################################################
+#                         tempDelay = s.transmissonDelay + s.processingDelay
+#                         i = 1
+#                         for n in range(len(path)):
+#                             tempNodes.append(list(path).__getitem__(n))
+#                             tempDelay = tempDelay + G.nodes[list(path).__getitem__(n)]['transmissionDelay']
+#                             if(i < len(path)):
+#                                 tempDelay = tempDelay + G[list(path).__getitem__(n)][list(path).__getitem__(n+1)]['processingDelay']- G.nodes[list(path).__getitem__(n)]['transmissionDelay']  # we substracted because the delay is in combined mode((1))
+#                             i = i + 1
+#                         tempNodes.append(d) ############################################################################
+#                         tempDelay = tempDelay + d.processingDelay
+#                         tempPath = Path.Path(tempNodes,tempDelay)
+#                         paths.append(tempPath)
+#                         allPaths[s.id, d.id] = paths
+#
+#                 # for path in nx.all_simple_paths(G, s.accessPoint, d.accessPoint):
+#                 #     if (len(path) < 8):
+#                 #         tempNodes = [s] ############################################################################
+#                 #         tempDelay = s.transmissonDelay + s.processingDelay
+#                 #         i = 1
+#                 #         for n in range(len(path)):
+#                 #             tempNodes.append(list(path).__getitem__(n))
+#                 #             tempDelay = tempDelay + G.nodes[list(path).__getitem__(n)]['transmissionDelay']
+#                 #             if(i < len(path)):
+#                 #                 tempDelay = tempDelay + G[list(path).__getitem__(n)][list(path).__getitem__(n+1)]['processingDelay']
+#                 #             i = i + 1
+#                 #         tempNodes.append(d) ############################################################################
+#                 #         tempDelay = tempDelay + d.processingDelay
+#                 #         tempPath = Path.Path(tempNodes,tempDelay)
+#                 #         paths.append(tempPath)
+#                 #         allPaths[s.id, d.id] = paths
+#
+#     return allPaths
+
+
+
+
+
+###################################
+
+# def findAllPath(G,hostsList):  speed
+#     allPaths = {}  # all the paths between all the hosts
+#     for s in hostsList:
+#         for d in hostsList:
+#             paths = []
+#             if (s.id == d.id):
+#                 continue
+#             if (s.accessPoint == d.accessPoint):
+#                 tempNodes = [s, s.accessPoint,
+#                              d]  ############################################################################
+#                 tempDelay = s.transmissonDelay + s.processingDelay + G.nodes[s.accessPoint][
+#                     'transmissionDelay'] + d.processingDelay
+#                 tempPath = Path.Path(tempNodes, tempDelay)
+#                 paths.append(tempPath)
+#                 allPaths[s.id, d.id] = paths
+#                 continue
+#             else:
+#                 for path in nx.all_simple_paths(G, s.accessPoint, d.accessPoint):
+#                     if (len(path) < 8):
+#                         tempNodes = [s] ############################################################################
+#                         tempDelay = s.transmissonDelay + s.processingDelay
+#                         i = 1
+#                         for n in range(len(path)):
+#                             tempNodes.append(list(path).__getitem__(n))
+#                             tempDelay = tempDelay + G.nodes[list(path).__getitem__(n)]['transmissionDelay']
+#                             if(i < len(path)):
+#                                 tempDelay = tempDelay + G[list(path).__getitem__(n)][list(path).__getitem__(n+1)]['processingDelay']
+#                             i = i + 1
+#                         tempNodes.append(d) ############################################################################
+#                         tempDelay = tempDelay + d.processingDelay
+#                         tempPath = Path.Path(tempNodes,tempDelay)
+#                         paths.append(tempPath)
+#                         allPaths[s.id, d.id] = paths
+#
+#     return allPaths
+
+
+
+# def findKthPathold(G, hostsList,K): speed
+#     allPaths = findAllPath(G,hostsList)   #all the paths between all the hosts
+#     for s in hostsList:
+#         for d in hostsList:
+#             if (s.id == d.id):
+#                 continue
+#             else:
+#                 if(s.id, d.id) in allPaths.keys():
+#                     paths = allPaths[s.id, d.id]
+#                     paths.sort(key= lambda x: x.delay)
+#                     if(len(paths)>K):
+#                         gap = len(paths) - K
+#                         for i in range(gap):
+#                             paths.pop()
+#
+#     return allPaths
 
 
 
@@ -371,11 +640,32 @@ def countGates(G, scheduledSWOTS):
         index = index + 1
 
 
-
-
-
-
     return numberOfGates,numberOfMergedGates
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def main():
@@ -389,12 +679,12 @@ def main():
 
     # Setting the simulation parameters #
     ##########################################
-    n= 15                   #number of nodes
+    n= 10                   #number of switches
     hosts = 15              #number of hosts
     nbOfTSNFlows = 100      #number of TSN flows
     pFlow = 0.1             #the probability that a flow will arrive at each time unit
     p= 0.3                  #the probability of having an edge between any two nodes
-    k = 10                   #the number of paths that will be chosen between each source and destination
+    k = 10                  #the number of paths that will be chosen between each source and destination
     timeSlotsAmount = 5     #how many time slots in the schedule --> the length of the schedule
     TSNCountWeight = 1/3
     bandwidthWeight = 1/3
@@ -428,13 +718,43 @@ def main():
 
     G = G.to_directed(False)
 
-
     # pre-routing phase #
     ##########################################
+    # oldStart = timer() speed
+    # oldFirstKthPaths = findKthPathold(G, hostsList, k)
+    # oldEnd = timer()
+    # oldThelongestTimeEver = oldEnd - oldStart
+
+    convertProcDelayToComulativeDelay(G,1)  # after this statment procDelay = proc Delay of next hop + trans Delay of next hop + progation delay of the link
     start = timer()
     firstKthPaths = findKthPath(G,hostsList,k) # The first kth paths between all the hosts (based on path delay)
     end = timer()
+    preRoutingPhaseTime = end - start
+
+    # start2 = timer() speed
+    # firstKthPaths2 = findKthPath2(G,hostsList,k) # The first kth paths between all the hosts (based on path delay)
+    # end2 = timer()
+    # ThelongestTimeEver2 = end2 - start2
+
+    # anotherStart = timer() speed
+    # anotherFirstKthPaths = findKthPathP(G,hostsList,k)
+    # anotherEnd= timer()
+    # anotherThelongestTimeEver = anotherEnd - anotherStart
+
+    # anotherStart2 = timer() speed
+    # anotherFirstKthPaths2 = findKthPathP2(G,hostsList,k)
+    # anotherEnd2= timer()
+    # anotherThelongestTimeEver2 = anotherEnd2 - anotherStart2
+    convertProcDelayToComulativeDelay(G,0) #after this statment procDelay = proc Delay of next hop + propgation Delay of the link
+
+    # convertProcDelayToComulativeDelay(G,
+    #                                   1)  # after this statment procDelay = proc Delay of next hop + trans Delay of next hop + progation delay of the link
+    # convertProcDelayToComulativeDelay(G,0) #after this statment procDelay = proc Delay of next hop + propgation Delay of the link
     # print(((end-start)/60)/60)
+
+
+    ##########################################
+
     ##########################################
 
     CLength = 0           #the schedule cycle length
@@ -464,12 +784,23 @@ def main():
     SWTSSchedulingExectionTimes = []                #a list of the execution times of the SWTS algorithm for all flows in microseconds [(1.3,True),(0.7,False)]
 
 
+
     while(True):
         if counter >= nbOfTSNFlows:
             break
         changeLinksBandwidth(G)             #change the link bandwidth randomly, in future it will be based on the best effort streams
         x = random.random()
         if(x<=pFlow):
+
+
+            # # this for loop to update the paths measurments
+            # for s in hostsList:
+            #     for d in hostsList:
+            #         if(s.id == d.id):
+            #             continue
+            #         paths = firstKthPaths[s.id,d.id]
+            #         computeMeasurments(G,paths)
+
 
 
             s=0
@@ -567,24 +898,24 @@ def main():
                 FTT = flowsList.__getitem__(0).__getitem__(1)
 
 
-            # # Scheduling With Time Slots (SWTS) #
-            # ##########################################
-            # start = timer()
-            # tempScheduledSWTS = SWTS(G, tempTSNFlow, scheduledFlowsSWTS, CLength, timeSlots, time, FTT)
-            # end = timer()
-            # SWTSSchedulingExectionTimes.append((((end - start) * 1000 * 1000), tempScheduledSWTS))
-            # ##########################################
-            #
-            #
-            # if(tempScheduledSWTS):
-            #     scheduledCounterSWTS = scheduledCounterSWTS + 1
-            #     for index in range(len(tempTSNFlow.path.nodes)):
-            #         if (index == 0 or index > len(tempTSNFlow.path.nodes) - 3):
-            #             continue
-            #         G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
-            #             'nbOfTSN'] = \
-            #         G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
-            #             'nbOfTSN'] + 1
+            # Scheduling With Time Slots (SWTS) #
+            ##########################################
+            start = timer()
+            tempScheduledSWTS = SWTS(G, tempTSNFlow, scheduledFlowsSWTS, CLength, timeSlots, time, FTT)
+            end = timer()
+            SWTSSchedulingExectionTimes.append((((end - start) * 1000 * 1000), tempScheduledSWTS))
+            ##########################################
+
+
+            if(tempScheduledSWTS):
+                scheduledCounterSWTS = scheduledCounterSWTS + 1
+                for index in range(len(tempTSNFlow.path.nodes)):
+                    if (index == 0 or index > len(tempTSNFlow.path.nodes) - 3):
+                        continue
+                    G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
+                        'nbOfTSN'] = \
+                    G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
+                        'nbOfTSN'] + 1
 
 
 
@@ -630,6 +961,12 @@ def main():
         total = total +x.__getitem__(0)
     averageSWTSTime = total/len(routingExecutionTimes)
     print('Average SWTS Time: {}'.format(averageSWTSTime))
+    print('The pre routing phase: {}'.format(preRoutingPhaseTime))
+    # print('The pre routing phase2: {}'.format(ThelongestTimeEver2)) speed
+    # print('The pre routing phase with multithreading: {}'.format(anotherThelongestTimeEver))
+    # print('The pre routing phase with multithreading2: {}'.format(anotherThelongestTimeEver2))
+    # print('The pre routing phase with old: {}'.format(oldThelongestTimeEver))
+
 
 
     # total = 0
@@ -728,6 +1065,79 @@ def main():
     #print(nx.edges(G,G.nodes))
     # for i in G.nodes:
     #     print(G.nodes[i]['transmissionDelay'])
+
+
+
+
+
+
+
+
+
+    # pathslist = [] speed
+    # for s in hostsList:
+    #     for d in hostsList:
+    #         if((s.id,d.id) in firstKthPaths.keys()):
+    #             paths = firstKthPaths[s.id, d.id]
+    #
+    #             for path in paths:
+    #                 textTemp = '('
+    #                 for index in range (len(path.nodes)):
+    #                     if(index ==0):
+    #                         textTemp = textTemp + '{}'.format(path.nodes[index].id) + ', '
+    #                     elif(index == len(path.nodes)-1):
+    #                         textTemp = textTemp + '{}'.format(path.nodes[index].id) + ')[delay={}]'.format(path.delay)
+    #                     else:
+    #                         textTemp = textTemp + '{}'.format(path.nodes[index]) + ', '
+    #                 pathslist.append(textTemp)
+    #
+    # print(pathslist)
+    #
+    #
+    # pathslist2 = []
+    # for s in hostsList:
+    #     for d in hostsList:
+    #         if((s.id,d.id) in anotherFirstKthPaths.keys()):
+    #             paths = anotherFirstKthPaths[s.id, d.id]
+    #
+    #             for path in paths:
+    #                 textTemp = '('
+    #                 for index in range (len(path.nodes)):
+    #                     if(index ==0):
+    #                         textTemp = textTemp + '{}'.format(path.nodes[index].id) + ', '
+    #                     elif(index == len(path.nodes)-1):
+    #                         textTemp = textTemp + '{}'.format(path.nodes[index].id) + ')[delay={}]'.format(path.delay)
+    #                     else:
+    #                         textTemp = textTemp + '{}'.format(path.nodes[index]) + ', '
+    #                 pathslist2.append(textTemp)
+    #
+    # print(pathslist2)
+    #
+    #
+    # pathslist3 = []
+    # for s in hostsList:
+    #     for d in hostsList:
+    #         if((s.id,d.id) in oldFirstKthPaths.keys()):
+    #             paths = oldFirstKthPaths[s.id, d.id]
+    #
+    #
+    #             for path in paths:
+    #                 textTemp = '('
+    #                 for index in range (len(path.nodes)):
+    #                     if(index ==0):
+    #                         textTemp = textTemp + '{}'.format(path.nodes[index].id) + ', '
+    #                     elif(index == len(path.nodes)-1):
+    #                         textTemp = textTemp + '{}'.format(path.nodes[index].id) + ')[delay={}]'.format(path.delay)
+    #                     else:
+    #                         textTemp = textTemp + '{}'.format(path.nodes[index]) + ', '
+    #                 pathslist3.append(textTemp)
+    #
+    # print(pathslist3)
+    #
+    # print(pathslist == pathslist2)
+    # print(pathslist == pathslist3)
+    # print(pathslist2 == pathslist3)
+
 
 
 main()
