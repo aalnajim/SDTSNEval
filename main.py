@@ -563,6 +563,7 @@ def SWOTS_ASAP(G, tempTSNFlow,scheduledFlowsSWOTS_ASAP,CLength,time, FTT):
 
     if (len(scheduledFlowsSWOTS_ASAP) != 0):
         while (startTime - timeStamp < CLength):
+            flag = 0
             operations = map(G, tempTSNFlow, startTime)
             index = 2
             for operation in operations[2::2]:
@@ -570,23 +571,33 @@ def SWOTS_ASAP(G, tempTSNFlow,scheduledFlowsSWOTS_ASAP,CLength,time, FTT):
                     SF = scheduledItem.__getitem__(0)
                     SST = scheduledItem.__getitem__(1)
                     SFO = map(G, SF, SST)
+                    index2 = 2
                     for SO in SFO[2::2]:
                         if (SO.id == operation.id):
-                            gap = SFO.__getitem__(index - 1).cumulativeDelay - operations.__getitem__(index - 1).cumulativeDelay
+                            gap = SFO.__getitem__(index2 - 1).cumulativeDelay - operations.__getitem__(index - 1).cumulativeDelay
                             if(gap<0):
-                                print("Hello")
                                 gap = SO.cumulativeDelay - operations.__getitem__(index - 1).cumulativeDelay
+                                if(gap>0):
+                                    startTime = startTime + gap
+                                    flag = 1
+                                    break
                             else:
-                                print("Bye")
+                                transmissionOperationLength = operation.cumulativeDelay + operations.__getitem__(index - 1).cumulativeDelay
+                                if(gap< transmissionOperationLength):
+                                    gap = SO.cumulativeDelay - operations.__getitem__(index - 1).cumulativeDelay
+                                    startTime = startTime + gap
+                                    flag = 1
+                                    break
+                        insex2 = index2 + 2
 
-                            if (gap > startTime):
-                                startTime = gap
-                            break
-
+                    if(flag ==1):
+                        break
+                if(flag ==1):
+                    break
                 index = index + 2
-            if ((startTime + operations.__getitem__(len(operations) - 2).cumulativeDelay) <= CLength):
-                scheduledFlowsSWOTS_ASAP.append((tempTSNFlow, startTime))
-                return True
+            if(flag==0):
+                    scheduledFlowsSWOTS_ASAP.append((tempTSNFlow, startTime))
+                    return True
 
 
 
@@ -937,7 +948,7 @@ def main():
                     end = timer()
                     SWOTS_AEAPSchedulingExectionTimes.append((((end - start) * 1000 * 1000), tempScheduledSWOTS_AEAP))
                     ##########################################
-                    print((end - start) * 1000 * 1000)
+                    # print((end - start) * 1000 * 1000)
 
                     if(tempScheduledSWOTS_AEAP):
                         scheduledCounterSWOTS_AEAP = scheduledCounterSWOTS_AEAP + 1
@@ -964,7 +975,7 @@ def main():
                     end = timer()
                     SWOTS_ASAPSchedulingExectionTimes.append((((end - start) * 1000 * 1000), tempScheduledSWOTS_ASAP))
                     ##########################################
-                    print((end - start) * 1000 * 1000)
+                    # print((end - start) * 1000 * 1000)
 
                     if(tempScheduledSWOTS_ASAP):
                         scheduledCounterSWOTS_ASAP = scheduledCounterSWOTS_ASAP + 1
@@ -1033,8 +1044,9 @@ def main():
     # reducePrecentage = (nbOfmergedGates/nbOfGates)*100
     print('The total number of flows: {}'.format(nbOfTSNFlows))
     # print('The percentage of reduced gates: {}%'.format(reducePrecentage))
-    # print('nb of scheduled flows using SWOTS: {}'.format(scheduledCounterSWOTS_AEAP))
+    print('nb of scheduled flows using SWOTS_AEAP: {}'.format(scheduledCounterSWOTS_AEAP))
     print('nb of scheduled flows using SWTS: {}'.format(scheduledCounterSWTS))
+    print('nb of scheduled flows using SWTS_ASAP: {}'.format(scheduledCounterSWOTS_ASAP))
     ##
     total = 0
     for x in routingExecutionTimes:
