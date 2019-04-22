@@ -639,7 +639,6 @@ def SWOTS_AEAP_WS(G, tempTSNFlow,scheduledFlowsSWOTS_AEAP_WS,CLength): #Scheduli
 
 
     else:
-        print(0)
         scheduledFlowsSWOTS_AEAP_WS.append((tempTSNFlow,startTime,queuingDelays))
         return True
 
@@ -672,21 +671,21 @@ def SWOTS_ASAP(G, tempTSNFlow,scheduledFlowsSWOTS_ASAP,CLength,time, FTT):
                                 if(gap>0):
                                     startTime = startTime + gap
                                     timeStamp = timeStamp + gap
-                                    if((startTime + operations.__getitem__(len(operations)-2).cumulativeDelay)>CLength):
+                                    if((startTime + operations.__getitem__(len(operations)-2).cumulativeDelay)>CLength): # this one should be gap instead of start time
                                         startTime = 0
                                     flag = 1
                                     break
                             else:
-                                transmissionOperationLength = operation.cumulativeDelay + operations.__getitem__(index - 1).cumulativeDelay
+                                transmissionOperationLength = operation.cumulativeDelay + operations.__getitem__(index - 1).cumulativeDelay # this should be (-) instead of (+)
                                 if(gap< transmissionOperationLength):
                                     gap = SO.cumulativeDelay - operations.__getitem__(index - 1).cumulativeDelay
                                     startTime = startTime + gap
                                     timeStamp = timeStamp+gap
-                                    if ((startTime + operations.__getitem__(len(operations) - 2).cumulativeDelay) > CLength):
+                                    if ((startTime + operations.__getitem__(len(operations) - 2).cumulativeDelay) > CLength): # this one should be gap instead of start time
                                         startTime = 0
                                     flag = 1
                                     break
-                        insex2 = index2 + 2
+                        index2 = index2 + 2
 
                     if(flag ==1):
                         break
@@ -701,6 +700,89 @@ def SWOTS_ASAP(G, tempTSNFlow,scheduledFlowsSWOTS_ASAP,CLength,time, FTT):
 
     else:
             scheduledFlowsSWOTS_ASAP.append((tempTSNFlow, startTime))
+            return (True)
+    return False
+
+def SWOTS_ASAP_WS(G, tempTSNFlow,scheduledFlowsSWOTS_ASAP_WS,CLength,time, FTT):
+    publishTime = 15000 + 1000
+    startTime = (time - FTT + publishTime)%CLength
+    timeStamp = 0
+    queuingDelays = [0 for _ in range(len(tempTSNFlow.path.nodes)-2)]
+
+    if (len(scheduledFlowsSWOTS_ASAP_WS) != 0):
+        while (timeStamp < CLength):
+            flag = 0
+            operations = map_ws(G, tempTSNFlow, startTime,queuingDelays)
+            index = 2
+            for operation in operations[2::2]:
+                for scheduledItem in scheduledFlowsSWOTS_ASAP_WS:
+                    SF = scheduledItem.__getitem__(0)
+                    SST = scheduledItem.__getitem__(1)
+                    SQD = scheduledItem.__getitem__(2)
+                    SFO = map_ws(G, SF, SST,SQD)
+                    index2 = 2
+                    for SO in SFO[2::2]:
+                        if (SO.id == operation.id):
+                            #tempIndex = int((index/2)-1)
+                            gap = SFO.__getitem__(index2 - 1).cumulativeDelay  - operations.__getitem__(index - 1).cumulativeDelay
+                            #gapModified = SFO.__getitem__(index2 - 1).cumulativeDelay%CLength - operations.__getitem__(index - 1).cumulativeDelay%CLength
+                            if(gap<0):
+                                gap = SO.cumulativeDelay - operations.__getitem__(index - 1).cumulativeDelay
+                                tempIndex = int((index / 2) - 1)
+                                if(gap>queuingDelays[tempIndex]):
+                                    #startTime = startTime + gap
+                                    tempAdjusment = (gap - queuingDelays[tempIndex])
+                                    timeStamp = timeStamp + tempAdjusment
+                                    queuingDelays[tempIndex] = gap
+
+                                    #queuingDelays[tempIndex] = queuingDelays[tempIndex]+tempAdjusment
+                                    if (tempAdjusment + operations.__getitem__(len(operations) - 1).cumulativeDelay - startTime > tempTSNFlow.flowMaxDelay):
+                                        desiredAdjusment = ((tempAdjusment + operations.__getitem__(len(operations) - 1).cumulativeDelay) -startTime - tempTSNFlow.flowMaxDelay)
+                                        startTime = startTime + desiredAdjusment
+                                        for i in range(len(queuingDelays)):
+                                            if (desiredAdjusment >= queuingDelays[i]):
+                                                desiredAdjusment = desiredAdjusment - queuingDelays[i]
+                                                queuingDelays[i] = 0
+                                            else:
+                                                queuingDelays[i] = queuingDelays[i] - desiredAdjusment
+                                                desiredAdjusment = 0
+                                            if (desiredAdjusment == 0):
+                                                break
+                                    if((desiredAdjusment + operations.__getitem__(len(operations)-2).cumulativeDelay)>CLength):
+                                        startTime = 0
+                                        queuingDelays = [0 for _ in range(len(tempTSNFlow.path.nodes) - 2)]
+                                    flag = 1
+                                    break
+                            else:
+                                transmissionOperationLength = operation.cumulativeDelay - operations.__getitem__(index - 1).cumulativeDelay
+                                if(gap< transmissionOperationLength):
+                                    gap = SO.cumulativeDelay - operations.__getitem__(index - 1).cumulativeDelay
+                                    tempIndex = int((index / 2) - 1)
+                                    
+
+
+                                    startTime = startTime + gap
+                                    timeStamp = timeStamp+gap
+                                    if ((startTime + operations.__getitem__(len(operations) - 2).cumulativeDelay) > CLength):
+                                        startTime = 0
+                                        queuingDelays = [0 for _ in range(len(tempTSNFlow.path.nodes) - 2)]
+                                    flag = 1
+                                    break
+                        index2 = index2 + 2
+
+                    if(flag ==1):
+                        break
+                if(flag ==1):
+                    break
+                index = index + 2
+            if(flag==0):
+                    scheduledFlowsSWOTS_ASAP_WS.append((tempTSNFlow, startTime,queuingDelays))
+                    return True
+
+
+
+    else:
+            scheduledFlowsSWOTS_ASAP_WS.append((tempTSNFlow, startTime,queuingDelays))
             return (True)
     return False
 
@@ -831,13 +913,13 @@ def main():
 
     # Setting the simulation parameters #
     ##########################################
-    n= 10                   #number of switches
-    hosts = 15              #number of hosts
-    nbOfTSNFlows = 500     #number of TSN flows
+    n= 20                   #number of switches
+    hosts = 30              #number of hosts
+    nbOfTSNFlows = 1000     #number of TSN flows
     pFlow = 0.1             #the probability that a flow will arrive at each time unit
     p= 0.3                  #the probability of having an edge between any two nodes
     k = 30                  #the number of paths that will be chosen between each source and destination
-    timeSlotsAmount = 8     #how many time slots in the schedule --> the length of the schedule
+    timeSlotsAmount = 10     #how many time slots in the schedule --> the length of the schedule
     TSNCountWeight = 1/3
     bandwidthWeight = 1/3
     hopCountWeight = 1/3
@@ -983,13 +1065,14 @@ def main():
                 tempRouted, candidatePaths = pathSelection(G, tempTSNFlow, tempRoutingList, TSNCountWeight, bandwidthWeight, hopCountWeight, flag)
                 end = timer()
                 routingExecutionTimes.append((((end - start) * 1000 * 1000),tempRouted))
-                flag = 1
+
                 ##########################################
 
-                if(tempRouted):
+                if(tempRouted and flag ==0):
                     routedCounter = routedCounter + 1
                 else:
                     break
+                flag = 1
 
                 for path in candidatePaths:
                     if (path == tempTSNFlow.path):
