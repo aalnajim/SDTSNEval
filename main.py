@@ -1019,7 +1019,7 @@ def main():
     ##########################################
     n= 20                   #number of switches
     hosts = 30              #number of hosts
-    nbOfTSNFlows = 1400     #number of TSN flows
+    nbOfTSNFlows = 2600     #number of TSN flows
     pFlow = 0.1             #the probability that a flow will arrive at each time unit
     p= 0.3                  #the probability of having an edge between any two nodes
     k = 30                  #the number of paths that will be chosen between each source and destination
@@ -1383,12 +1383,14 @@ def main():
         time = time + 1
 
 
+    ## To calculate the number of reduced gate for AEAP_WS
+    # nbOfGates, nbOfmergedGates = countGates_AEAP_WS(G,scheduledFlowsSWOTS_AEAP_WS)
+    # print(nbOfGates)
+    # print(nbOfmergedGates)
+    # reducePrecentage = (nbOfmergedGates/nbOfGates)*100
+    # print('The percentage of reduced gates: {}%'.format(reducePrecentage))
 
-    nbOfGates, nbOfmergedGates = countGates_AEAP_WS(G,scheduledFlowsSWOTS_AEAP_WS)
-    print(nbOfGates)
-    print(nbOfmergedGates)
-    reducePrecentage = (nbOfmergedGates/nbOfGates)*100
-    print('The percentage of reduced gates: {}%'.format(reducePrecentage))
+    # To print the total number of flows and routed flows
     print('The total number of flows: {}'.format(nbOfTSNFlows))
     print('nb of routed flows: {}'.format(routedCounter))
 
@@ -1427,18 +1429,18 @@ def main():
     # print('Average SWOTS-AEAP Time in micro seconds: {}, with minimum running time equal ({}) and maximum running time equal ({})'.format(averageSWOTSAEAPTime,min,max))
     # print("{} , {} , {} , {} , {}".format(scheduledCounterSWOTS_AEAP,max,min,averageSWOTSAEAPTime,reducePrecentage))
 
-    total = 0
-    max = -10
-    min = 10000
-    for x in SWOTS_AEAP_WSSchedulingExectionTimes:
-        total = total + x.__getitem__(0)
-        if (x.__getitem__(0) > max):
-            max = x.__getitem__(0)
-        if (x.__getitem__(0) < min):
-            min = x.__getitem__(0)
-    averageSWOTSAEAPWSTime = total/len(SWOTS_AEAP_WSSchedulingExectionTimes)
-    print('Average SWOTS-AEAP-WS Time in micro seconds: {}, with minimum running time equal ({}) and maximum running time equal ({})'.format(averageSWOTSAEAPWSTime,min,max))
-    print("{} , {} , {} , {} , {}".format(scheduledCounterSWOTS_AEAP_WS,max,min,averageSWOTSAEAPWSTime,reducePrecentage))
+    # total = 0
+    # max = -10
+    # min = 10000
+    # for x in SWOTS_AEAP_WSSchedulingExectionTimes:
+    #     total = total + x.__getitem__(0)
+    #     if (x.__getitem__(0) > max):
+    #         max = x.__getitem__(0)
+    #     if (x.__getitem__(0) < min):
+    #         min = x.__getitem__(0)
+    # averageSWOTSAEAPWSTime = total/len(SWOTS_AEAP_WSSchedulingExectionTimes)
+    # print('Average SWOTS-AEAP-WS Time in micro seconds: {}, with minimum running time equal ({}) and maximum running time equal ({})'.format(averageSWOTSAEAPWSTime,min,max))
+    # print("{} , {} , {} , {} , {}".format(scheduledCounterSWOTS_AEAP_WS,max,min,averageSWOTSAEAPWSTime,reducePrecentage))
 
 
     # total = 0
