@@ -15,4 +15,4 @@ class TSNFlow():
         self.id = id
         self.source = source
         self.destniation = destniation
-        self.flowMaxDelay = random.randint(900,1500)
+        self.flowMaxDelay = random.randint(400,1500)
