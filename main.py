@@ -1019,7 +1019,7 @@ def main():
     ##########################################
     n= 20                   #number of switches
     hosts = 30              #number of hosts
-    nbOfTSNFlows = 2600     #number of TSN flows
+    nbOfTSNFlows = 1900     #number of TSN flows
     pFlow = 0.1             #the probability that a flow will arrive at each time unit
     p= 0.3                  #the probability of having an edge between any two nodes
     k = 30                  #the number of paths that will be chosen between each source and destination
@@ -1111,23 +1111,23 @@ def main():
     timeSlots = createTimeSlots(timeSlotsAmount)    #the list of time slots
     flowsList = []                                  #list of all created TSN flows
     # scheduledFlowsSWOTS_AEAP = []                   #list of all scheduled TSN flows using SWOTS (As Early As Possible)
-    scheduledFlowsSWOTS_AEAP_WS = []                #list of all scheduled TSN flows using SWOTS (As Early As Possible) with queueing delays allowed
+    # scheduledFlowsSWOTS_AEAP_WS = []                #list of all scheduled TSN flows using SWOTS (As Early As Possible) with queueing delays allowed
     # scheduledFlowsSWOTS_ASAP = []                   #list of all scheduled TSN flows using SWOTS (As Soon As Possible)
-    # scheduledFlowsSWOTS_ASAP_WS = []                # list of all scheduled TSN flows using SWOTS (As Soon As Possible)
-    scheduledFlowsSWTS =[]                          #list of all scheduled TSN flows using SWTS
+    scheduledFlowsSWOTS_ASAP_WS = []                # list of all scheduled TSN flows using SWOTS (As Soon As Possible)
+    # scheduledFlowsSWTS =[]                          #list of all scheduled TSN flows using SWTS
     counter = 0                                     #count the created TSN flows
     # scheduledCounterSWOTS_AEAP = 0                  #count the scheduled TSN flows (routed and scheduled) using SWOTS (As Early As Possible)
-    scheduledCounterSWOTS_AEAP_WS = 0               #count the scheduled TSN flows (routed and scheduled) using SWOTS (As Early As Possible) with queueing delays allowed
+    # scheduledCounterSWOTS_AEAP_WS = 0               #count the scheduled TSN flows (routed and scheduled) using SWOTS (As Early As Possible) with queueing delays allowed
     # scheduledCounterSWOTS_ASAP = 0                  #count the scheduled TSN flows (routed and scheduled) using SWOTS (As Soon As Possible)
-    # scheduledCounterSWOTS_ASAP_WS = 0                  # count the scheduled TSN flows (routed and scheduled) using SWOTS (As Soon As Possible)
+    scheduledCounterSWOTS_ASAP_WS = 0                  # count the scheduled TSN flows (routed and scheduled) using SWOTS (As Soon As Possible)
     # scheduledCounterSWTS = 0                        #count the scheduled TSN flows (routed and scheduled) using SWTS
     routedCounter = 0                               #count the routed TSN flows, but not scheduled
     time = 0                                        #Track the arrival time of TSN flows
     routingExecutionTimes = []                      #a list of the execution times of the routing algorithm for all flows in microseconds [(1.3,True),(0.7,False)]
     # SWOTS_AEAPSchedulingExectionTimes = []          #a list of the execution times of the SWOTS (As Early As Possible) algorithm for all flows in microseconds [(1.3,True),(0.7,False)]
-    SWOTS_AEAP_WSSchedulingExectionTimes = []       #a list of the execution times of the SWOTS (As Early As Possible) algorithm for all flows in microseconds [(1.3,True),(0.7,False)]
+    # SWOTS_AEAP_WSSchedulingExectionTimes = []       #a list of the execution times of the SWOTS (As Early As Possible) algorithm for all flows in microseconds [(1.3,True),(0.7,False)]
     # SWOTS_ASAPSchedulingExectionTimes = []          #a list of the execution times of the SWOTS (As Soon As Possible) algorithm for all flows in microseconds [(1.3,True),(0.7,False)]
-    # SWOTS_ASAP_WSSchedulingExectionTimes = []            #a list of the execution times of the SWOTS (As Soon As Possible) algorithm for all flows in microseconds [(1.3,True),(0.7,False)]
+    SWOTS_ASAP_WSSchedulingExectionTimes = []            #a list of the execution times of the SWOTS (As Soon As Possible) algorithm for all flows in microseconds [(1.3,True),(0.7,False)]
     # SWTSSchedulingExectionTimes = []                #a list of the execution times of the SWTS algorithm for all flows in microseconds [(1.3,True),(0.7,False)]
 
 
@@ -1158,14 +1158,14 @@ def main():
             flowsList.append((tempTSNFlow,time))
             counter = counter + 1
             # tempScheduledSWOTS_AEAP = False
-            tempScheduledSWOTS_AEAP_WS = False
+            # tempScheduledSWOTS_AEAP_WS = False
             # tempScheduledSWOTS_ASAP = False
-            # tempScheduledSWOTS_ASAP_WS = False
+            tempScheduledSWOTS_ASAP_WS = False
             # tempScheduledSWTS = False
             tempRoutingList = firstKthPaths
             flag = 0
             while(
-                tempScheduledSWOTS_AEAP_WS == False # or tempScheduledSWOTS_AEAP == False or tempScheduledSWOTS_ASAP == False or tempScheduledSWTS == False or tempScheduledSWOTS_ASAP_WS == False or tempScheduledSWOTS_ASAP == False tempScheduledSWOTS_AEAP_WS == False or tempScheduledSWOTS_AEAP == False or tempScheduledSWOTS_ASAP == False or tempScheduledSWTS == False
+                 tempScheduledSWOTS_ASAP_WS == False #or tempScheduledSWOTS_AEAP_WS == False or tempScheduledSWOTS_AEAP == False or tempScheduledSWOTS_ASAP == False or tempScheduledSWTS == False or tempScheduledSWOTS_ASAP == False tempScheduledSWOTS_AEAP_WS == False or tempScheduledSWOTS_AEAP == False or tempScheduledSWOTS_ASAP == False or tempScheduledSWTS == False
             ):
                 # Path-Selection phase #
                 ##########################################
@@ -1257,44 +1257,18 @@ def main():
                 #         'nbOfTSN'] + 1
 
 
-                if(not tempScheduledSWOTS_AEAP_WS):
-                    # Scheduling WithOut Time Slots As Early As Possible With Stops (Queuing Delays) (SWOTS_AEAP_WS) #
-                    ##########################################
-                    start = timer()
-                    tempScheduledSWOTS_AEAP_WS = SWOTS_AEAP_WS(G, tempTSNFlow, scheduledFlowsSWOTS_AEAP_WS, CLength)
-                    end = timer()
-                    SWOTS_AEAP_WSSchedulingExectionTimes.append((((end - start) * 1000 * 1000), tempScheduledSWOTS_AEAP_WS))
-                    ##########################################
-                    # print((end - start) * 1000 * 1000)
-
-                    if(tempScheduledSWOTS_AEAP_WS):
-                        scheduledCounterSWOTS_AEAP_WS = scheduledCounterSWOTS_AEAP_WS + 1
-                        for index in range(len(tempTSNFlow.path.nodes)):
-                            if (index == 0 or index > len(tempTSNFlow.path.nodes) - 3):
-                                continue
-                            G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
-                        'nbOfTSN'] = \
-                            G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
-                        'nbOfTSN'] + 1
-
-
-
-                # if(not tempScheduledSWOTS_ASAP_WS):
-                #     if(len(flowsList)==0):
-                #         FTT = time
-                #     else:
-                #         FTT = flowsList.__getitem__(0).__getitem__(1)
-                #     # Scheduling WithOut Time Slots As Soon As Possible With Stops (Queuing Delays) (SWOTS_ASAP_WS) #
+                # if(not tempScheduledSWOTS_AEAP_WS):
+                #     # Scheduling WithOut Time Slots As Early As Possible With Stops (Queuing Delays) (SWOTS_AEAP_WS) #
                 #     ##########################################
                 #     start = timer()
-                #     tempScheduledSWOTS_ASAP_WS = SWOTS_ASAP_WS(G, tempTSNFlow, scheduledFlowsSWOTS_ASAP_WS, CLength,time,FTT)
+                #     tempScheduledSWOTS_AEAP_WS = SWOTS_AEAP_WS(G, tempTSNFlow, scheduledFlowsSWOTS_AEAP_WS, CLength)
                 #     end = timer()
-                #     SWOTS_ASAP_WSSchedulingExectionTimes.append((((end - start) * 1000 * 1000), tempScheduledSWOTS_ASAP_WS))
+                #     SWOTS_AEAP_WSSchedulingExectionTimes.append((((end - start) * 1000 * 1000), tempScheduledSWOTS_AEAP_WS))
                 #     ##########################################
                 #     # print((end - start) * 1000 * 1000)
                 #
-                #     if(tempScheduledSWOTS_ASAP_WS):
-                #         scheduledCounterSWOTS_ASAP_WS = scheduledCounterSWOTS_ASAP_WS + 1
+                #     if(tempScheduledSWOTS_AEAP_WS):
+                #         scheduledCounterSWOTS_AEAP_WS = scheduledCounterSWOTS_AEAP_WS + 1
                 #         for index in range(len(tempTSNFlow.path.nodes)):
                 #             if (index == 0 or index > len(tempTSNFlow.path.nodes) - 3):
                 #                 continue
@@ -1302,6 +1276,32 @@ def main():
                 #         'nbOfTSN'] = \
                 #             G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
                 #         'nbOfTSN'] + 1
+
+
+
+                if(not tempScheduledSWOTS_ASAP_WS):
+                    if(len(flowsList)==0):
+                        FTT = time
+                    else:
+                        FTT = flowsList.__getitem__(0).__getitem__(1)
+                    # Scheduling WithOut Time Slots As Soon As Possible With Stops (Queuing Delays) (SWOTS_ASAP_WS) #
+                    ##########################################
+                    start = timer()
+                    tempScheduledSWOTS_ASAP_WS = SWOTS_ASAP_WS(G, tempTSNFlow, scheduledFlowsSWOTS_ASAP_WS, CLength,time,FTT)
+                    end = timer()
+                    SWOTS_ASAP_WSSchedulingExectionTimes.append((((end - start) * 1000 * 1000), tempScheduledSWOTS_ASAP_WS))
+                    ##########################################
+                    # print((end - start) * 1000 * 1000)
+
+                    if(tempScheduledSWOTS_ASAP_WS):
+                        scheduledCounterSWOTS_ASAP_WS = scheduledCounterSWOTS_ASAP_WS + 1
+                        for index in range(len(tempTSNFlow.path.nodes)):
+                            if (index == 0 or index > len(tempTSNFlow.path.nodes) - 3):
+                                continue
+                            G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
+                        'nbOfTSN'] = \
+                            G[tempTSNFlow.path.nodes.__getitem__(index)][tempTSNFlow.path.nodes.__getitem__(index + 1)][
+                        'nbOfTSN'] + 1
 
 
 
@@ -1395,11 +1395,11 @@ def main():
     print('nb of routed flows: {}'.format(routedCounter))
 
 
-    print('nb of scheduled flows using SWOTS_AEAP: {}'.format(scheduledCounterSWOTS_AEAP_WS))
+    # print('nb of scheduled flows using SWOTS_AEAP: {}'.format(scheduledCounterSWOTS_AEAP_WS))
     # print('nb of scheduled flows using SWOTS_AEAP_WS: {}'.format(scheduledCounterSWOTS_AEAP_WS))
     # print('nb of scheduled flows using SWTS: {}'.format(scheduledCounterSWTS))
     # print('nb of scheduled flows using SWOTS_ASAP: {}'.format(scheduledCounterSWOTS_ASAP))
-    # print('nb of scheduled flows using SWOTS_ASAP_WS: {}'.format(scheduledCounterSWOTS_ASAP_WS))
+    print('nb of scheduled flows using SWOTS_ASAP_WS: {}'.format(scheduledCounterSWOTS_ASAP_WS))
     ##
 
 
